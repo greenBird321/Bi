@@ -1,0 +1,8 @@
+{
+  "require": {
+    "filp/whoops": "dev-master",
+    "xxtime/component": "dev-master",
+    "symfony/yaml": "~3",
+    "illuminate/support": "~v5.4"
+  }
+}

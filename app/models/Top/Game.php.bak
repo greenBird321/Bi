@@ -1,0 +1,135 @@
+<?php
+namespace MyApp\Models\Top;
+
+
+use Phalcon\Mvc\Model;
+use Phalcon\DI;
+use Phalcon\Db;
+use Phalcon\Security\Random;
+
+class Game extends Model
+{
+
+    private $_link;
+
+
+    public function onConstruct()
+    {
+        $this->_link = DI::getDefault()->get('dbData');
+    }
+
+
+    /**
+     * 获取游戏
+     * @param int $status
+     * @return mixed
+     */
+    public function getGames($status = 1)
+    {
+        $sql = "SELECT class_id,game_id,version,name,icon FROM games WHERE status=:status";
+        $bind = array('status' => $status);
+        if (!empty($_SESSION['resources']['allow_game'])) {
+            $allow_game = '"' . implode('","', $_SESSION['resources']['allow_game']) . '"';
+            $sql .= " AND game_id IN($allow_game)";
+        }
+
+        $query = DI::getDefault()->get('dbData')->query($sql, $bind); //$query->numRows();
+        $query->setFetchMode(Db::FETCH_ASSOC);
+        $data = $query->fetchAll();
+        return $data;
+    }
+
+
+    public function getGroups()
+    {
+        $sql = "SELECT id,class_id,name,icon FROM class";
+        $query = DI::getDefault()->get('dbData')->query($sql);
+        $query->setFetchMode(Db::FETCH_ASSOC);
+        $data = $query->fetchAll();
+        return $data;
+    }
+
+
+    public function getGamesByGroup()
+    {
+        $games = $this->getGames(1);
+        $groups = $this->getGroups();
+        if (!$games) {
+            return false;
+        }
+
+        $result = [];
+
+        foreach ($groups as $group) {
+            $result[$group['class_id']]['info'] = $group;
+        }
+
+        foreach ($games as $game) {
+            if (!isset($result[$game['class_id']])) {
+                continue;
+            }
+            $result[$game['class_id']]['data'][$game['game_id']] = $game;
+        }
+
+        // 过滤
+        foreach ($result as $key => $value) {
+            if (empty($value['data'])) {
+                unset($result[$key]);
+            }
+        }
+        return $result;
+    }
+
+
+    public function setDefaultApp()
+    {
+        $games = $this->getGames(1);
+        return $games[0];
+    }
+
+    public function saveData($data)
+    {
+        $sql = 'TRUNCATE TABLE class;';
+        DI::getDefault()->get('dbData')->execute($sql);
+
+        $sql = 'TRUNCATE TABLE games;';
+        DI::getDefault()->get('dbData')->execute($sql);
+
+        foreach ($data['data'] as $item) {
+            $this->saveClass($item);
+
+            foreach ($item['game'] as $game) {
+                $this->saveGame($game);
+            }
+        }
+    }
+
+    private function saveClass($data)
+    {
+        $sql = "INSERT INTO `class`(`id`, `class_id`,`name`,create_time) VALUES (?, ?, ?, ? )";
+        DI::getDefault()->get('dbData')->execute($sql, array(
+            $data['id'],
+            $data['class_id'],
+            $data['name'],
+            date('Y-m-d H:i:s', time()),
+        ));
+    }
+
+    private function saveGame($data)
+    {
+        $sql = "INSERT INTO `games`(`id`,`game_id`, `class_id`,`version`, `name`,`en_name`,`status`,`domain`,`icon`,create_time) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ? )";
+        DI::getDefault()->get('dbData')->execute($sql, array(
+            $data['id'],
+            $data['game_id'],
+            $data['class_id'],
+            $data['version'],
+            $data['name'],
+            $data['en_name'],
+            $data['status'],
+            $data['domain'],
+            $data['icon'],
+            date('Y-m-d H:i:s', time()),
+        ));
+    }
+
+}

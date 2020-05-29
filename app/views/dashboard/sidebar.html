@@ -1,0 +1,170 @@
+<aside id="aside" class="app-aside hidden-xs bg-black"><!--主题-->
+    <div class="aside-wrap">
+        <div class="navi-wrap">
+            <!-- user -->
+            <div class="clearfix hidden-xs text-center hide" id="aside-user">
+                <div class="dropdown wrapper">
+                    <a href="app.page.profile">
+                <span class="thumb-lg w-auto-folded avatar m-t-sm">
+                  <img src="{{common['avatar']}}" class="img-full" alt="{{common['name']}}">
+                </span>
+                    </a>
+                    <a href="#" data-toggle="dropdown" class="dropdown-toggle hidden-folded">
+                <span class="clear">
+                  <span class="block m-t-sm">
+                    <strong class="font-bold text-lt">{{common['name']}}</strong>
+                    <b class="caret"></b>
+                  </span>
+                  <span class="text-muted text-xs block">{{common['username']}}</span>
+                </span>
+                    </a>
+                    <!-- dropdown -->
+                    <ul class="dropdown-menu animated fadeInRight w hidden-folded">
+                        <li class="wrapper b-b m-b-sm bg-info m-t-n-xs">
+                            <span class="arrow top hidden-folded arrow-info"></span>
+                            <div>
+                                <p>300mb of 500mb used</p>
+                            </div>
+                            <div class="progress progress-xs m-b-none dker">
+                                <div class="progress-bar bg-white" data-toggle="tooltip" data-original-title="50%" style="width: 50%"></div>
+                            </div>
+                        </li>
+                        <li>
+                            <a href>操作设置</a>
+                        </li>
+                        <li>
+                            <a href>账户信息</a>
+                        </li>
+                        <li>
+                            <a href>
+                                <span class="badge bg-danger pull-right">3</span>
+                                消息通知
+                            </a>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+                            <a href="/logout">注销登录</a>
+                        </li>
+                    </ul>
+                    <!-- / dropdown -->
+                </div>
+                <div class="line dk hidden-folded"></div>
+            </div>
+            <!-- / user -->
+
+            <!-- nav -->
+            <nav ui-nav class="navi clearfix">
+                <ul class="nav">
+                    <li class="hidden-folded padder m-t m-b-sm text-muted text-xs">
+                        <span>Overview</span>
+                    </li>
+                    <li>
+                        <a href="#">
+                            <i class="glyphicon glyphicon-home"></i>
+                            <span class="font-bold">控制板</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            <!--<b class="badge bg-info pull-right">9</b>-->
+                            <i class="glyphicon glyphicon-envelope"></i>
+                            <span class="font-bold">收件箱</span>
+                        </a>
+                    </li>
+                    <li class="line dk"></li>
+
+                    <li class="hidden-folded padder m-t m-b-sm text-muted text-xs">
+                        <span>Navigation</span>
+                    </li>
+
+
+                    {%if common['menu_true'] is defined%}
+                    {%for item in common['menu_true']%}
+
+                    {%if item['sub'] is defined%}
+                    <li>
+                        <a href class="auto">
+                            <span class="pull-right text-muted">
+                              <i class="fa fa-fw fa-angle-right text"></i>
+                              <i class="fa fa-fw fa-angle-down text-active"></i>
+                            </span>
+                            <i class="fa {%if item['icon']%}{{item['icon']}}{%else%}fa-folder-open-o{%endif%}"></i>
+                            <span>{{item['name']}}</span>
+                        </a>
+                        <ul class="nav nav-sub dk">
+                            <li class="nav-sub-header">
+                                <a href>
+                                    <span>{{item['name']}}</span>
+                                </a>
+                            </li>
+                            {%for sub in item['sub']%}
+                            {%if sub['type']=='menu'%}
+                            <li>
+                                <a data-pjax href="{{sub['resource']}}">
+                                    <span>{{sub['name']}}</span>
+                                </a>
+                            </li>
+                            {%endif%}
+                            {%endfor%}
+                        </ul>
+                    </li>
+                    {%endif%}
+
+                    {%if item['sub'] is not defined%}
+                    <li>
+                        <a data-pjax href="{{item['resource']}}">
+                            <i class="fa {%if item['icon']%}{{item['icon']}}{%else%}fa-folder-open-o{%endif%}"></i>
+                            <span>{{item['name']}}</span>
+                        </a>
+                    </li>
+                    {%endif%}
+
+                    {%endfor%}
+                    {%endif%}
+
+
+                    <li class="line dk hidden-folded"></li>
+
+                    <li class="hidden-folded padder m-t m-b-sm text-muted text-xs">
+                        <span>Others</span>
+                    </li>
+                    <li>
+                        <a href="#">
+                            <i class="icon-user icon text-success-lter"></i>
+                            <b class="badge bg-success pull-right">30%</b>
+                            <span>账户信息</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            <i class="icon-question icon"></i>
+                            <span>使用帮助</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            <!-- nav -->
+
+            <!-- aside footer -->
+            <div class="wrapper m-t">
+                <div class="text-center-folded">
+                    <span class="pull-right pull-none-folded">60%</span>
+                    <span class="hidden-folded">Complete</span>
+                </div>
+                <div class="progress progress-xxs m-t-sm dk">
+                    <div class="progress-bar progress-bar-info" style="width: 60%;">
+                    </div>
+                </div>
+                <div class="text-center-folded">
+                    <span class="pull-right pull-none-folded">35%</span>
+                    <span class="hidden-folded">Expiration</span>
+                </div>
+                <div class="progress progress-xxs m-t-sm dk">
+                    <div class="progress-bar progress-bar-primary" style="width: 35%;">
+                    </div>
+                </div>
+            </div>
+            <!-- / aside footer -->
+        </div>
+    </div>
+</aside>

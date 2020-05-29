@@ -1,0 +1,138 @@
+<div class="app-content-body ">
+    <div class="hbox hbox-auto-xs hbox-auto-sm">
+
+        <!-- main -->
+        <div class="col">
+            <div class="wrapper-md">
+                <!-- stats -->
+
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h4 class="font-thin m-t-none m-b text-muted" style="margin-bottom: 0;">订阅配置</h4>
+                            </div>
+                            <div class="panel-body">
+                                 <form class="form-horizontal " data-pjax method="post" action="/Setting/add" role="form">
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label" style="margin-top: 8px;">开始时间: </label>
+                                        <div class="col-sm-10">
+                                            <div class="input-group w-md">
+                                                <input type="text" id="start_time" 
+                                                name="start_time" class="form-control" style="margin-top: 10px;" value="{%if subscribe is defined%}{{subscribe['start_time']}}{%endif%}"  ui-jq="datepicker" ui-options="{
+                                            format: 'yyyy-mm-dd',
+                                            language: 'zh-CN',
+                                            autoclose: true,
+                                            clearBtn: true,
+                                            todayBtn: true,
+                                            }" class="form-control w-md" readonly />
+                                            <span class="input-group-btn">
+                                                <button type="button" class="btn btn-default"  style="margin-top: 10px;"><i class="glyphicon glyphicon-calendar"></i></button>
+                                            </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label" style="margin-top: 8px;">结束时间: </label>
+                                        <div class="col-sm-10">
+                                            <div class="input-group w-md">
+                                                <input type="text" id="end_time" 
+                                                name="end_time" class="form-control" style="margin-top: 10px;"
+                                                value="{%if subscribe is defined%}{{subscribe['end_time']}}{%endif%}" 
+                                                 ui-jq="datepicker" ui-options="{
+                                            format: 'yyyy-mm-dd',
+                                            language: 'zh-CN',
+                                            autoclose: true,
+                                            clearBtn: true,
+                                            todayBtn: true,
+                                            }" class="form-control w-md" readonly />
+                                            <span class="input-group-btn">
+                                                <button type="button" class="btn btn-default"  style="margin-top: 10px;"><i class="glyphicon glyphicon-calendar"></i></button>
+                                            </span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <h4 class="font-thin m-t-none m-b text-muted">标签选择</h4>
+                                    <div class="line line-dashed b-b line-lg"></div>
+
+                                    <div class="section row mb15">
+                                        <div class="col-md-12">
+                                            <select id="list_box" class="tags"  name="select[]" multiple="multiple" size="10"  ui-jq="duallistbox" ui-options="{
+                                            filterTextClear: '显示全部',
+                                            filterPlaceHolder: '标签搜索',
+                                            infoTextFiltered: '<span class=&quot;label label-warning&quot;>匹配结果:</span> {0} 个',
+                                            infoText: '共 {0} 标签',
+                                            infoTextEmpty: '未选中'
+                                        }">
+                                                <option value="new_account" 
+                                                {% if subscribe['new_subscribe']['新增用户'] is defined %} selected 
+                                                {% endif %}>新增用户</option>
+                                                <option value="new_pay" {% if subscribe['new_subscribe']['新增付费'] is defined %} selected 
+                                                {% endif %}>新增付费</option>
+                                                <option value="stay_user" {% if subscribe['new_subscribe']['用户留存'] is defined %} selected 
+                                                {% endif %}>用户留存</option>
+                                                <option value="ARPU" {% if subscribe['new_subscribe']['ARPU'] is defined %} selected 
+                                                {% endif %}>ARPU</option>
+                                                <option value="ARPPU" {% if subscribe['new_subscribe']['ARPPU'] is defined %} selected 
+                                                {% endif %}>ARPPU</option>
+                                                <option value="rate" {% if subscribe['new_subscribe']['付费率'] is defined %} selected 
+                                                {% endif %}>付费率</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="m-t-md pull-right"><button class="btn btn-sm btn-primary">订阅</button></div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h4 class="font-thin m-t-none m-b text-muted" style="margin-bottom: 0;">订阅内容</h4>
+                            </div>
+                            <div class="panel-body">
+                                <div class="padder-md">
+                                    <!-- streamline -->
+                                    <div class="m-b text-md"></div>
+                                    <div class="streamline b-l m-b">
+                                        <div class="bg-info wrapper-sm m-l-n m-r-n m-b r r-2x">
+                                            我的订阅
+                                        </div>
+                                        <div class="sl-item">
+                                            <div class="m-l">
+                                                <div class="text-muted">
+                                                {% if subscribe is defined %}
+                                                    {% for index,words in subscribe['subscribe'] %}
+                                                        {{words}}
+                                                    {% endfor %}
+                                                </div>
+                                                <p><a class="text-info">
+                                                    开始时间
+                                                    {{subscribe['start_time']}}</a></p>
+                                                <p><a class="text-info">
+                                                    结束时间
+                                                    {{subscribe["end_time"]}}</a></p>
+                                                <p><a class="text-info">
+                                                    更新时间
+                                                {{subscribe["create_time"]}}</a></p>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                       </div>
+                                    <!-- / streamline -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- / stats -->
+
+            </div>
+        </div>
+        <!-- / main -->
+
+    </div>
+</div>

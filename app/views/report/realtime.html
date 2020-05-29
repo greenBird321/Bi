@@ -1,0 +1,512 @@
+<style type="text/css">
+    .be_choiced{color: #23b7e5;}
+    .column_align{text-align: center;}
+    .chart-layout{min-height: 320px;}
+</style>
+
+<div class="app-content-body ">
+    <div class="hbox hbox-auto-xs hbox-auto-sm">
+
+        <!-- main -->
+        <div class="col">
+            <!-- main header -->
+            <div class="bg-light lter b-b wrapper-md">
+                <div class="row">
+                    <div class="col-sm-6 col-xs-12">
+                        <h1 class="m-n font-thin h3 text-black">实时数据</h1>
+                        <small class="text-muted">- 按小时统计，新增、活跃、充值总额、充值设备数</small>
+                    </div>
+                    <div class="col-sm-6 text-right hidden-xs">
+                        <div class="inline m-r text-left">
+                            <button class="btn m-b-xs btn-sm btn-primary btn-addon" data-toggle="modal" data-target="#data_filter">
+                                <i class="glyphicon glyphicon-filter"></i>数据筛选
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- / main header -->
+           <div class="wrapper-md">
+                <!-- stats -->
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="panel wrapper" style="border-color: #e0dede;">
+                            <label class="i-switch bg-warning pull-right">
+                                <input type="checkbox">
+                                <i></i>
+                            </label>
+                            <h4 class="font-thin m-t-none m-b text-muted">实时数据</h4>
+                            <div id="chartdiv" class="chart-layout" ui-jq="amcharts"
+                                 ui-options='{{report_img}}'
+                                 ui-config="chartdiv" style="width: 100%; height: 350px;"></div>
+                        </div>
+                    </div>
+                </div>
+                <!-- / stats -->
+
+                <!-- / data list -->
+               <div class="panel panel-default">
+                   <div class="panel-heading" style="border-bottom-width: 0; padding-bottom: 0;">
+                       <h4 style="color: #98a6ad; margin-bottom: 0;">数据内容
+                       </h4>
+                       <div class="wrapper bg-white b-b">
+                           <ul id="tab" class="nav nav-pills nav-sm">
+                               <li class="active" id="0"><a href='javascript:void(0)'>概况</a></li>
+                               <li id="1"><a href='javascript:void(0)'>渠道新增</a></li>
+                               <li id="2"><a href='javascript:void(0)'>渠道活跃</a></li>
+                               <li id="3"><a href='javascript:void(0)'>渠道充值</a></li>
+                           </ul>
+                       </div>
+                   </div>
+                   <div>
+                       <div class="table-responsive" id="report">
+                           <table id="table_list" ui-jq="dataTable" ui-options='{
+                                  columns: [
+                                    { title: "时间" },
+                                    { title: "新增数量" },
+                                    { title: "活跃数量" },
+                                    { title: "活跃设备" },
+                                    { title: "活跃IP" },
+                                    { title: "充值总额" },
+                                    { title: "充值设备数" },
+                                  ],
+                                data: {{report_tab}},
+                                paging: false,
+                                ordering: false,
+                                searching: false,
+                                destroy: true
+                            }' ui-extend=[{"bind":"#table_list","click":"#column_oper"}]
+                                  class="table table-striped b-t b-b">
+                           </table>
+
+                       </div>
+                       <div class="table-responsive" id="report_new" style="display:none">
+                           <table id="table_list1" ui-jq="dataTable" ui-options='{
+                                  columns: [
+                                    { title: "渠道" },
+                                    { title: "0点" },
+                                    { title: "1点" },
+                                    { title: "2点" },
+                                    { title: "3点" },
+                                    { title: "4点" },
+                                    { title: "5点" },
+                                    { title: "6点" },
+                                    { title: "7点" },
+                                    { title: "8点" },
+                                    { title: "9点" },
+                                    { title: "10点" },
+                                    { title: "11点" },
+                                    { title: "12点" },
+                                    { title: "13点" },
+                                    { title: "14点" },
+                                    { title: "15点" },
+                                    { title: "16点" },
+                                    { title: "17点" },
+                                    { title: "18点" },
+                                    { title: "19点" },
+                                    { title: "20点" },
+                                    { title: "21点" },
+                                    { title: "22点" },
+                                    { title: "23点" },
+                                    { title: "24点" },
+                                  ],
+                                data: {{report_new}},
+                                paging: false,
+                                ordering: false,
+                                searching: false,
+                                destroy: true
+                            }' ui-extend=[{"bind":"#table_list1","click":"#column_oper"}]
+                                  class="table table-striped b-t b-b">
+                           </table>
+                       </div>
+                       <div class="table-responsive" id="report_act" style="display:none">
+                           <table id="table_list2" ui-jq="dataTable" ui-options='{
+                                  columns: [
+                                    { title: "渠道" },
+                                    { title: "0点" },
+                                    { title: "1点" },
+                                    { title: "2点" },
+                                    { title: "3点" },
+                                    { title: "4点" },
+                                    { title: "5点" },
+                                    { title: "6点" },
+                                    { title: "7点" },
+                                    { title: "8点" },
+                                    { title: "9点" },
+                                    { title: "10点" },
+                                    { title: "11点" },
+                                    { title: "12点" },
+                                    { title: "13点" },
+                                    { title: "14点" },
+                                    { title: "15点" },
+                                    { title: "16点" },
+                                    { title: "17点" },
+                                    { title: "18点" },
+                                    { title: "19点" },
+                                    { title: "20点" },
+                                    { title: "21点" },
+                                    { title: "22点" },
+                                    { title: "23点" },
+                                    { title: "24点" },
+                                  ],
+                                data: {{report_act}},
+                                paging: false,
+                                ordering: false,
+                                searching: false,
+                                destroy: true
+                            }' ui-extend=[{"bind":"#table_list2","click":"#column_oper"}]
+                                  class="table table-striped b-t b-b">
+                           </table>
+                       </div>
+                       <div class="table-responsive" id="report_pay" style="display:none">
+                           <table id="table_list3" ui-jq="dataTable" ui-options='{
+                                  columns: [
+                                    { title: "渠道" },
+                                    { title: "0点" },
+                                    { title: "1点" },
+                                    { title: "2点" },
+                                    { title: "3点" },
+                                    { title: "4点" },
+                                    { title: "5点" },
+                                    { title: "6点" },
+                                    { title: "7点" },
+                                    { title: "8点" },
+                                    { title: "9点" },
+                                    { title: "10点" },
+                                    { title: "11点" },
+                                    { title: "12点" },
+                                    { title: "13点" },
+                                    { title: "14点" },
+                                    { title: "15点" },
+                                    { title: "16点" },
+                                    { title: "17点" },
+                                    { title: "18点" },
+                                    { title: "19点" },
+                                    { title: "20点" },
+                                    { title: "21点" },
+                                    { title: "22点" },
+                                    { title: "23点" },
+                                    { title: "24点" },
+                                  ],
+                                data: {{report_pay}},
+                                paging: false,
+                                ordering: false,
+                                searching: false,
+                                destroy: true
+                            }' ui-extend=[{"bind":"#table_list3","click":"#column_oper"}]
+                                  class="table table-striped b-t b-b">
+                           </table>
+                       </div>
+                   </div>
+               </div>
+                <!-- / data list -->
+
+            </div>
+        </div>
+        <!-- / main -->
+
+    </div>
+</div>
+
+<div class="modal fade" id="data_filter" tabindex="-1" role="dialog" aria-labelledby="data_label" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="data_form" action="/report/realtime" method="POST" data-pjax>
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title" id="data_label">
+                    筛选条件选择
+                </h4>
+            </div>
+            <div class="modal-body">
+                    <div class="panel-group" id="accordion">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">
+                                    <a data-toggle="collapse" data-parent="#accordion" href="#collapse_date">
+                                        时间:
+                                    </a>
+                                </h4>
+                            </div>
+                            <div id="collapse_date" class="panel-collapse collapse in">
+                                <div class="panel-body">
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label" style="margin-top: 16px;">时间: </label>
+                                        <div class="col-sm-9">
+                                            <div class="input-group w-md">
+                                                <input type="text" id="start_time" class="form-control" placeholder="{{date}}" value="{{date}}" style="margin-top: 10px;"  ui-jq="datepicker" ui-options="{
+                                            format: 'yyyy-mm-dd',
+                                            language: 'zh-CN',
+                                            autoclose: true,
+                                            clearBtn: true,
+                                            todayBtn: true,
+                                            }" class="form-control w-md" name="start_time" readonly />
+                                                <span class="input-group-btn">
+                                                <button type="button" class="btn btn-default"  style="margin-top: 10px;"><i class="glyphicon glyphicon-calendar"></i></button>
+                                            </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">返回</button>
+                <button type="button" class="btn btn-primary" id="confirm_filter">确定</button>
+            </div>
+            </form>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+
+<script type="text/javascript">
+     // 图像插件配置
+        var amChartConfig = {};
+        amChartConfig["chartdiv"] = {
+        "type": "serial",
+        "categoryField": "country",
+        "colors": [
+            "#B0DE09",
+            "#0D8ECF",
+            "#2A0CD0",
+            "#CD0D74",
+            "#CC0000",
+            "#00CC00",
+            "#0000CC",
+            "#DDDDDD",
+            "#999999",
+            "#333333",
+            "#990000"
+        ],
+        "startDuration": 1,
+        "categoryAxis": {
+            "gridPosition": "start"
+        },
+        "trendLines": [],
+        "guides": [],
+        "valueAxes": [
+            {
+                "id": "ValueAxis-1",
+                "title": ""
+            }
+        ],
+        "allLabels": [],
+        "balloon": {},
+        "legend": {
+            "enabled": true
+        },
+        "titles": [
+            {
+                "id": "Title-1",
+                "size": 15,
+                "text": ""
+            }
+        ]
+    };
+    // 图像插件显示区域配置
+    var chartGraphsTmp = {};
+    /**
+     * des: 参数说明
+     * bolloonText: 描述格式化
+     * type: 曲线的类型, 圆角, 直线等等
+     * fillAlphas: 填充区域的透明度
+     * id: 索引
+     * lineAlpha: 曲线的透明度
+     * title: 文字索引
+     * valueField: 取值对应索引
+     */
+    chartGraphsTmp["chartdiv"] = {
+        "balloonText": "[[title]] of [[category]]:[[value]]",
+        "type": "smoothedLine",
+        "fillAlphas": 0.7,
+        "id": "AmGraph-1",
+        "lineAlpha": 1,
+        "title": "graph 1",
+        "valueField": "column-1"
+    };
+
+    // 显示区域数据模型
+    var chartTmpDetail = {};
+    chartTmpDetail["chartdiv"] = JSON.parse('' +
+            '[{"id":"visits","field":"visits","title":"新增账号数"},' +
+            '{"id":"visits2","field":"visits2","title":"活跃账号数"}]');
+
+
+    $( document ).ready( function()
+    {   
+        // table切换
+         $('#tab').find('li').each(function(index){
+            $(this).on('click',function(){
+                $('#tab').find('li').removeClass('active');
+                $(this).addClass('active');
+                if($(this).attr('id') == 0){
+                    $("#report").show();
+                    $("#report_new").hide(); 
+                    $("#report_act").hide();     
+                    $("#report_pay").hide();
+                }
+                if($(this).attr('id') == 1){
+                    $("#report").hide();
+                    $("#report_new").show(); 
+                    $("#report_act").hide();      
+                    $("#report_pay").hide();
+                }
+                if($(this).attr('id') == 2){
+                    $("#report").hide();
+                    $("#report_act").show(); 
+                    $("#report_new").hide();      
+                    $("#report_pay").hide();
+                }
+                if($(this).attr('id') == 3){
+                    $("#report").hide();
+                    $("#report_pay").show();
+                    $("#report_new").hide();
+                    $("#report_act").hide();
+                }
+            })
+        })
+        // 全选
+        $( '.check-all' ).click( function()
+        {
+            var target = $( this ).attr( "data-target" );
+            $( '#'+target ).find( 'input[type="checkbox"]' ).each( function()
+            {
+                $( this ).prop( "checked", true );
+            } );
+        } );
+
+
+        // 取消全选
+        $( '.check-cancel' ).click( function()
+        {
+            var target = $( this ).attr( "data-target" );
+            $( '#'+target ).find( 'input[type="checkbox"]' ).each( function()
+            {
+                $( this ).prop( "checked", false );
+            } );
+        } );
+
+        $( '#confirm_filter' ).click( function()
+        {
+            var _form = $( '#data_form' );
+
+            $('.modal').map(function() {
+                $(this).modal('hide');
+                $('.modal-backdrop').remove();
+                $("body").removeClass("modal-open");
+            });
+
+            loading();
+            _form.submit();
+        } );
+
+        // 监听 bootstrap collapse 事件, 并相应添加自定义处理
+        $( 'body' ).on( 'click.collapse.data-api', '[data-toggle=collapse]', function( e )
+        {
+            var _that = $( this );
+
+            $( 'body' ).find( '[data-toggle=collapse]' ).each( function()
+            {
+                var href = $( this ).attr( 'href'),
+                        _that = $( this );
+                var tmp = '[<span class="be_choiced">{replace}</span>]';
+
+                switch( href )
+                {
+                    case '#collapse_date':
+                        var _start_time = $( '#start_time' ),
+                            _end_time = $( '#end_time' );
+
+                        if( _start_time.val() != '' && _end_time.val() != '' )
+                        {
+                            _that.html( '时间: ' + tmp.replace( '{replace}', _start_time.val()+' - '+_end_time.val() ) );
+                        }
+                        else
+                        {
+                            /*toastr.options = {
+                             "closeButton": false,
+                             "debug": false,
+                             "newestOnTop": false,
+                             "progressBar": false,
+                             "positionClass": "toast-top-center",
+                             "preventDuplicates": false,
+                             "onclick": null,
+                             "showDuration": "300",
+                             "hideDuration": "1000",
+                             "timeOut": "5000",
+                             "extendedTimeOut": "1000",
+                             "showEasing": "swing",
+                             "hideEasing": "linear",
+                             "showMethod": "fadeIn",
+                             "hideMethod": "fadeOut"
+                             };
+
+                             toastr.info( '时间选择错误, 请检查!' );*/
+                            _that.html( '时间:' );
+                        }
+                        break;
+                    case '#collapse_device':
+                        var _os = [];
+
+                        $( '#collapse_device' ).find( 'input[name="choice_device[]"]' ).each( function()
+                        {
+                            if( $( this ).is( ':checked' ) )
+                            {
+                                _os.push( $( this ).val() );
+                            }
+                        } );
+
+                        if( _os.length >= 1 )
+                        {
+                            if( _os.length >= 6 )
+                            {
+                                _that.html( '选中设备: ' + tmp.replace( '{replace}', '6+' ) );
+                            }
+                            else
+                            {
+                                _that.html( '选中设备: ' + tmp.replace( '{replace}', _os.join() ) );
+                            }
+                        }
+                        else
+                        {
+                            _that.html( '设备:' );
+                        }
+                        break;
+                    case '#collapse_channel':
+                        var _channel = [];
+
+                        $( '#collapse_channel' ).find( 'input[name="choice_channel[]"]' ).each( function()
+                        {
+                            if( $( this ).is( ':checked' ) )
+                            {
+                                _channel.push( $( this ).val() );
+                            }
+                        } );
+
+                        if( _channel.length >= 1 )
+                        {
+                            if( _channel.length >= 6 )
+                            {
+                                _that.html( '选中渠道: ' + tmp.replace( '{replace}', '6+' ) );
+                            }
+                            else
+                            {
+                                _that.html( '选中渠道: ' + tmp.replace( '{replace}', _channel.join() ) );
+                            }
+                        }
+                        else
+                        {
+                            _that.html( '渠道:' );
+                        }
+                        break;
+                }
+            } );
+        } );
+    } );
+</script>

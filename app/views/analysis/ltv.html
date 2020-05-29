@@ -1,0 +1,699 @@
+<style type="text/css">
+    .be_choiced{color: #23b7e5;}
+    .column_align{text-align: center;}
+
+    #ltv_chart {
+        width	: 100%;
+        height	: 400px;
+    }
+</style>
+
+<div class="app-content-body ">
+    <div class="hbox hbox-auto-xs hbox-auto-sm">
+
+        <!-- main -->
+        <div class="col">
+            <!-- main header -->
+            <div class="bg-light lter b-b wrapper-md">
+                <div class="row">
+                    <div class="col-sm-6 col-xs-12">
+                        <h1 class="m-n font-thin h3 text-black">用户价值</h1>
+                        <small class="text-muted">- 玩家在游戏中的消费情况</small>
+                    </div>
+                    <div class="col-sm-6 text-right hidden-xs">
+                        <div class="inline m-r text-left">
+                            <button class="btn m-b-xs btn-sm btn-primary btn-addon" data-toggle="modal" data-target="#data_filter">
+                                <i class="glyphicon glyphicon-filter"></i>数据筛选
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- / main header -->
+            <div class="wrapper-md">
+                <!-- stats -->
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="panel wrapper" style="border-color: #e0dede;">
+                            <label class="i-switch bg-warning pull-right">
+                                <input type="checkbox">
+                                <i></i>
+                            </label>
+                            <h4 class="font-thin m-t-none m-b text-muted">每日LTV图表</h4>
+                            <div id="ltv_chart" ui-jq="amcharts" ui-options='{{ltv}}' ui-config="ltv_chart"></div>
+                        </div>
+                    </div>
+                </div>
+                <!-- / stats -->
+
+                <!-- / data list -->
+                <div id="data_tab" class="panel panel-default">
+                    <div class="panel-heading" style="border-bottom-width: 0; padding-bottom: 0;">
+                        <h4 style="color: #98a6ad; margin-bottom: 0;">数据内容
+                            <a class="pull-right text-success" style="font-size: 14px;" data-toggle="modal" data-target="#column_filter" href="javascript: void(0);">
+                                <i class="glyphicon glyphicon-filter"></i>自定义显示
+                            </a>
+                        </h4>
+                    </div>
+                    <div>
+                        <div class="table-responsive">
+                            <table id="table_list" ui-jq="dataTable" ui-options='{
+                            "autoWidth": false,
+                            "columns": [
+                                {"title": "日期","className": "column_align"},
+                                {"title": "新增","className": "column_align"},
+                                {"title": "0日","className": "column_align"},
+                                {"title": "1日","className": "column_align"},
+                                {"title": "2日","className": "column_align"},
+                                {"title": "3日","className": "column_align"},
+                                {"title": "4日","className": "column_align"},
+                                {"title": "5日","className": "column_align"},
+                                {"title": "6日","className": "column_align"},
+                                {"title": "7日","className": "column_align"},
+                                {"title": "8日","className": "column_align"},
+                                {"title": "9日","className": "column_align"},
+                                {"title": "10日","className": "column_align"},
+                                {"title": "11日","className": "column_align"},
+                                {"title": "12日","className": "column_align"},
+                                {"title": "13日","className": "column_align"},
+                                {"title": "14日","className": "column_align"},
+                                {"title": "21日","className": "column_align"},
+                                {"title": "30日","className": "column_align"},
+                                {"title": "60日","className": "column_align"}
+                            ],
+                            "data": {{ltv_tab}},
+                            "paging": false,
+                            "ordering": false,
+                            "searching": false,
+                            "destroy": true
+                            }' ui-extend=[{"bind":"#table_list","click":"#column_oper","default":[10,11,12,13,14,15,16,17,18,19]}] class="table table-striped b-t b-b">
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <!-- / data list -->
+
+            </div>
+        </div>
+        <!-- / main -->
+
+    </div>
+</div>
+
+<div class="modal fade" id="data_filter" tabindex="-1" role="dialog" aria-labelledby="data_label" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="data_form" action="/Analysis/ltv" method="POST" data-pjax >
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title" id="data_label">
+                    筛选条件选择
+                </h4>
+            </div>
+            <div class="modal-body">
+                <div class="panel-group" id="accordion">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                                <a data-toggle="collapse" data-parent="#accordion" href="#collapse_date">
+                                    时间:
+                                </a>
+                            </h4>
+                        </div>
+                        <div id="collapse_date" class="panel-collapse collapse in">
+                            <div class="panel-body">
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label" style="margin-top: 16px;">开始时间: </label>
+                                    <div class="col-sm-9">
+                                        <div class="input-group w-md">
+                                            <input type="text" id="start_time" class="form-control" style="margin-top: 10px;" placeholder="{{start_time}}" value="{{start_time}}" ui-jq="datepicker" ui-options="{
+                                            format: 'yyyy-mm-dd',
+                                            language: 'zh-CN',
+                                            autoclose: true,
+                                            clearBtn: true,
+                                            todayBtn: true,
+                                            }" class="form-control w-md" name="start_time" readonly />
+                                            <span class="input-group-btn">
+                                                <button type="button" class="btn btn-default"  style="margin-top: 10px;"><i class="glyphicon glyphicon-calendar"></i></button>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label" style="margin-top: 16px;">结束时间: </label>
+                                    <div class="col-sm-9">
+                                        <div class="input-group w-md">
+                                            <input type="text" id="end_time" class="form-control" style="margin-top: 10px;" placeholder="{{end_time}}" value="{{end_time}}" ui-jq="datepicker" ui-options="{
+                                            format: 'yyyy-mm-dd',
+                                            language: 'zh-CN',
+                                            autoclose: true,
+                                            clearBtn: true,
+                                            todayBtn: true,
+                                            }" class="form-control w-md" name="end_time" readonly />
+                                            <span class="input-group-btn">
+                                                <button type="button" class="btn btn-default"  style="margin-top: 10px;"><i class="glyphicon glyphicon-calendar"></i></button>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                                <a data-toggle="collapse" data-parent="#accordion" href="#collapse_device">
+                                    设备:
+                                </a>
+                            </h4>
+                        </div>
+                        <div id="collapse_device" class="panel-collapse collapse">
+                            <div class="panel-body">
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label" style="padding-top: 7px;">选择: </label>
+                                    <div class="col-sm-10">
+                                        <div class="checkbox">
+                                            <label class="checkbox-inline i-checks">
+                                                <input class="check-all" data-target="collapse_device" type="radio" value="all" name="device_func" />
+                                                <i></i>
+                                                全选
+                                            </label>
+                                            <label class="checkbox-inline i-checks">
+                                                <input class="check-cancel" data-target="collapse_device" type="radio" value="cancel" name="device_func" />
+                                                <i></i>
+                                                取消
+                                            </label>
+                                        </div>
+                                        <div class="line line-dashed b-b line-lg pull-in"></div>
+
+                                        {% for index,detail in device %}
+                                        <label class="checkbox-inline i-checks" style="margin-left: 0; margin-right: 10px;">
+                                            <input type="checkbox" value="{{detail['name']}}" name="choice_device[]" />
+                                            <i></i>
+                                            {{detail['ch']}}
+                                        </label>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                                <a data-toggle="collapse" data-parent="#accordion" href="#collapse_channel">
+                                    渠道:
+                                </a>
+                            </h4>
+                        </div>
+                        <div id="collapse_channel" class="panel-collapse collapse">
+                            <div class="panel-body">
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label" style="padding-top: 10px;">选择: </label>
+                                    <div class="col-sm-10">
+                                        <div class="checkbox">
+                                            <label class="checkbox-inline i-checks">
+                                                <input class="check-all" data-target="collapse_channel" type="radio" value="all" name="channel_func" />
+                                                <i></i>
+                                                全选
+                                            </label>
+                                            <label class="checkbox-inline i-checks">
+                                                <input class="check-cancel" data-target="collapse_channel" type="radio" value="cancel" name="channel_func" />
+                                                <i></i>
+                                                取消
+                                            </label>
+                                        </div>
+                                        <div class="line line-dashed b-b line-lg pull-in"></div>
+
+                                        {% for index,detail in channel %}
+                                        <label class="checkbox-inline i-checks" style="margin-left: 0; margin-right: 10px;">
+                                            <input type="checkbox" value="{{detail['name']}}" name="choice_channel[]" />
+                                            <i></i>
+                                            {{detail['ch']}}
+                                        </label>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">返回</button>
+                <button type="button" class="btn btn-primary" id="confirm_filter">确定</button>
+            </div>
+            </form>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+
+<div class="modal fade" id="column_filter" tabindex="-1" role="dialog" aria-labelledby="column_label" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="btn btn-info pull-right" id="clear_column">清空</button>
+                <h4 class="modal-title" id="column_label">
+                    数据列选择
+                </h4>
+            </div>
+            <div class="modal-body">
+                <form id="column_form">
+                    <div class="panel panel-default">
+                        <div class="panel-body">
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">组合: </label>
+                                <div class="col-sm-10">
+                                    <label class="checkbox-inline i-checks">
+                                        <input type="radio" value="0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20" name="column_groups" />
+                                        <i></i>
+                                        全部显示
+                                    </label>
+                                    <label class="checkbox-inline i-checks">
+                                        <input type="radio" value="0,1,2,3,4,5,6,7,8,9,10,11,12" name="column_groups" />
+                                        <i></i>
+                                        显示1-10天
+                                    </label>
+                                    <label class="checkbox-inline i-checks">
+                                        <input type="radio" value="0,1,13,14,15,16,17,18,19" name="column_groups" />
+                                        <i></i>
+                                        显示11-60天
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel panel-default">
+                        <div class="panel-body">
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">自定义: </label>
+                                <div class="col-sm-10">
+                                    <label class="checkbox-inline i-checks" style="padding-left: 30px;">
+                                        <input type="checkbox" value="0" name="column_custom[]" />
+                                        <i></i>
+                                        日期
+                                    </label>
+                                    <label class="checkbox-inline i-checks" style="padding-left: 30px;">
+                                        <input type="checkbox" value="1" name="column_custom[]" />
+                                        <i></i>
+                                        新增
+                                    </label>
+                                    <label class="checkbox-inline i-checks" style="padding-left: 30px;">
+                                        <input type="checkbox" value="2" name="column_custom[]" />
+                                        <i></i>
+                                        0日
+                                    </label>
+                                    <label class="checkbox-inline i-checks" style="padding-left: 30px;">
+                                        <input type="checkbox" value="3" name="column_custom[]" />
+                                        <i></i>
+                                        1日
+                                    </label>
+                                    <label class="checkbox-inline i-checks">
+                                        <input type="checkbox" value="4" name="column_custom[]" />
+                                        <i></i>
+                                        2日
+                                    </label>
+                                    <label class="checkbox-inline i-checks">
+                                        <input type="checkbox" value="5" name="column_custom[]" />
+                                        <i></i>
+                                        3日
+                                    </label>
+                                    <label class="checkbox-inline i-checks">
+                                        <input type="checkbox" value="6" name="column_custom[]" />
+                                        <i></i>
+                                        4日
+                                    </label>
+                                    <label class="checkbox-inline i-checks">
+                                        <input type="checkbox" value="7" name="column_custom[]" />
+                                        <i></i>
+                                        5日
+                                    </label>
+                                    <label class="checkbox-inline i-checks">
+                                        <input type="checkbox" value="8" name="column_custom[]" />
+                                        <i></i>
+                                        6日
+                                    </label>
+                                    <label class="checkbox-inline i-checks">
+                                        <input type="checkbox" value="9" name="column_custom[]" />
+                                        <i></i>
+                                        7日
+                                    </label>
+                                    <label class="checkbox-inline i-checks">
+                                        <input type="checkbox" value="10" name="column_custom[]" />
+                                        <i></i>
+                                        8日
+                                    </label>
+                                    <label class="checkbox-inline i-checks">
+                                        <input type="checkbox" value="11" name="column_custom[]" />
+                                        <i></i>
+                                        9日
+                                    </label>
+                                    <label class="checkbox-inline i-checks">
+                                        <input type="checkbox" value="12" name="column_custom[]" />
+                                        <i></i>
+                                        10日
+                                    </label>
+                                    <label class="checkbox-inline i-checks">
+                                        <input type="checkbox" value="13" name="column_custom[]" />
+                                        <i></i>
+                                        11日
+                                    </label>
+                                    <label class="checkbox-inline i-checks">
+                                        <input type="checkbox" value="14" name="column_custom[]" />
+                                        <i></i>
+                                        12日
+                                    </label>
+                                    <label class="checkbox-inline i-checks">
+                                        <input type="checkbox" value="15" name="column_custom[]" />
+                                        <i></i>
+                                        13日
+                                    </label>
+                                    <label class="checkbox-inline i-checks">
+                                        <input type="checkbox" value="16" name="column_custom[]" />
+                                        <i></i>
+                                        14日
+                                    </label>
+                                    <label class="checkbox-inline i-checks">
+                                        <input type="checkbox" value="17" name="column_custom[]" />
+                                        <i></i>
+                                        21日
+                                    </label>
+                                    <label class="checkbox-inline i-checks">
+                                        <input type="checkbox" value="18" name="column_custom[]" />
+                                        <i></i>
+                                        30日
+                                    </label>
+                                    <label class="checkbox-inline i-checks">
+                                        <input type="checkbox" value="19" name="column_custom[]" />
+                                        <i></i>
+                                        60日
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">返回</button>
+                <button type="button" class="btn btn-primary" id="column_oper" data-column="">确定</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+
+<script type="text/javascript">
+    // 图像插件配置
+    var amChartConfig = {};
+    amChartConfig["ltv_chart"] = {
+        "type": "serial",
+        "categoryField": "category",
+        "colors": [
+            "#B0DE09",
+            "#0D8ECF",
+            "#2A0CD0",
+            "#CD0D74",
+            "#CC0000",
+            "#00CC00",
+            "#0000CC",
+            "#DDDDDD",
+            "#999999",
+            "#333333",
+            "#990000"
+        ],
+        "startDuration": 1,
+        "categoryAxis": {
+            "gridPosition": "start"
+        },
+        "trendLines": [],
+        "guides": [],
+        "valueAxes": [
+            {
+                "id": "ValueAxis-1",
+                "title": ""
+            }
+        ],
+        "allLabels": [],
+        "balloon": {},
+        "legend": {
+            "enabled": true
+        },
+        "titles": [
+            {
+                "id": "Title-1",
+                "size": 30,
+                "text": ""
+            }
+        ]
+    };
+
+    // 图像插件显示区域配置
+    var chartGraphsTmp = {};
+    chartGraphsTmp["ltv_chart"] = {
+        "balloonText": "[[title]] of [[category]]:[[value]]",
+        "type": "smoothedLine",
+        "fillAlphas": 0.7,
+        "id": "AmGraph-1",
+        "lineAlpha": 0,
+        "title": "graph 1",
+        "valueField": "column-1"
+    };
+
+    // 显示区域数据模型
+    var chartTmpDetail = {};
+    chartTmpDetail["ltv_chart"] = JSON.parse( '{{ltv_tmp}}' );
+
+    $( document ).ready( function()
+    {
+        var clear_form = function( addr )
+        {
+            var _form = $( addr );
+            _form.find( 'input' ).each( function( i )
+            {
+                $( this ).attr( 'checked', false );
+            } );
+        };
+
+        // 全选
+        $( '.check-all' ).click( function()
+        {
+            var target = $( this ).attr( "data-target" );
+            $( '#'+target ).find( 'input[type="checkbox"]' ).each( function()
+            {
+                $( this ).prop( "checked", true );
+            } );
+        } );
+
+        // 取消全选
+        $( '.check-cancel' ).click( function()
+        {
+            var target = $( this ).attr( "data-target" );
+            $( '#'+target ).find( 'input[type="checkbox"]' ).each( function()
+            {
+                $( this ).prop( "checked", false );
+            } );
+        } );
+
+        var toastr_options = {
+            "closeButton": false,
+            "debug": false,
+            "newestOnTop": false,
+            "progressBar": false,
+            "positionClass": "toast-top-center",
+            "preventDuplicates": false,
+            "onclick": null,
+            "showDuration": "300",
+            "hideDuration": "1000",
+            "timeOut": "5000",
+            "extendedTimeOut": "1000",
+            "showEasing": "swing",
+            "hideEasing": "linear",
+            "showMethod": "fadeIn",
+            "hideMethod": "fadeOut"
+        };
+
+        $( '#confirm_filter' ).click( function()
+        {
+            var _form = $( '#data_form' );
+
+            $('.modal').map(function() {
+                $(this).modal('hide');
+                $('.modal-backdrop').remove();
+                $("body").removeClass("modal-open");
+            });
+
+            loading();
+            _form.submit();
+        } );
+
+        // 监听 bootstrap collapse 事件, 并相应添加自定义处理
+        $( 'body' ).on( 'click.collapse.data-api', '[data-toggle=collapse]', function( e )
+        {
+            var _that = $( this );
+
+            $( 'body' ).find( '[data-toggle=collapse]' ).each( function()
+            {
+                var href = $( this ).attr( 'href'),
+                    _that = $( this );
+                var tmp = '[<span class="be_choiced">{replace}</span>]';
+
+                switch( href )
+                {
+                    case '#collapse_date':
+                        var _start_time = $( '#start_time' ),
+                            _end_time = $( '#end_time' );
+
+                        if( _start_time.val() != '' && _end_time.val() != '' )
+                        {
+                            _that.html( '时间: ' + tmp.replace( '{replace}', _start_time.val()+' - '+_end_time.val() ) );
+                        }
+                        else
+                        {
+                            _that.html( '时间:' );
+                        }
+                    break;
+                    case '#collapse_device':
+                        var _os = [];
+
+                        $( '#collapse_device' ).find( 'input[name="choice_device[]"]' ).each( function()
+                        {
+                            if( $( this ).is( ':checked' ) )
+                            {
+                                _os.push( $( this ).val() );
+                            }
+                        } );
+
+                        if( _os.length >= 1 )
+                        {
+                            if( _os.length >= 6 )
+                            {
+                                _that.html( '选中设备: ' + tmp.replace( '{replace}', '6+' ) );
+                            }
+                            else
+                            {
+                                _that.html( '选中设备: ' + tmp.replace( '{replace}', _os.join() ) );
+                            }
+                        }
+                        else
+                        {
+                            _that.html( '设备:' );
+                        }
+                        break;
+                    case '#collapse_channel':
+                        var _channel = [];
+
+                        $( '#collapse_channel' ).find( 'input[name="choice_channel[]"]' ).each( function()
+                        {
+                            if( $( this ).is( ':checked' ) )
+                            {
+                                _channel.push( $( this ).val() );
+                            }
+                        } );
+
+                        if( _channel.length >= 1 )
+                        {
+                            if( _channel.length >= 6 )
+                            {
+                                _that.html( '选中渠道: ' + tmp.replace( '{replace}', '6+' ) );
+                            }
+                            else
+                            {
+                                _that.html( '选中渠道: ' + tmp.replace( '{replace}', _channel.join() ) );
+                            }
+                        }
+                        else
+                        {
+                            _that.html( '渠道:' );
+                        }
+                        break;
+                }
+            } );
+        } );
+
+        // 清空功能
+        $( '#clear_column' ).click( function()
+        {
+            clear_form( '#column_form' );
+        } );
+
+        var column_filter = $( '#column_filter');
+
+        // 监听 model 显示事件
+        column_filter.on( 'show.bs.modal', function()
+        {
+            // 设置默认选中的列
+            $( '#column_form' ).find( 'input[name="column_custom[]"]' ).each( function()
+            {
+                var _val = $( this ).val();
+                if( _val == 0 || _val == 1 )
+                {
+                    $( this ).prop( 'checked', 'true' );
+                }
+            } );
+        } );
+
+        // 监听 model 关闭事件
+        column_filter.on( 'hidden.bs.modal', function()
+        {
+            clear_form( '#column_form' );
+        } );
+
+        // 筛选列功能执行
+        $( '#column_oper' ).click( function()
+        {
+            var _form = $( '#column_form' ),
+                _data = _form.serializeArray();
+            var _ifChoiced = '', isChoiced = {};
+
+            for( var iCount in _data )
+            {
+                if( _ifChoiced == '' )
+                {
+                    _ifChoiced = _data[iCount]['name'];
+                }
+
+                // 防止未定义报错
+                if( typeof( isChoiced[_data[iCount]['name']] ) == 'undefined' )
+                {
+                    isChoiced[_data[iCount]['name']] = [];
+                }
+
+                if( _ifChoiced == 'column_groups' )
+                {
+                    isChoiced[_data[iCount]['name']] = _data[iCount]['value'].split( ',' );
+                }
+                else
+                {
+                    isChoiced[_data[iCount]['name']].push( _data[iCount]['value'] );
+                }
+
+                // 不允许两种筛选条件并存
+                if( _data[iCount]['name'] != _ifChoiced && _ifChoiced != '' )
+                {
+                    toastr.options = $.extend( true, {}, toastr_options );
+                    toastr.info( '不允许两种筛选条件并存, 请检查!' );
+
+                    _ifChoiced = false;
+                    break;
+                }
+            }
+
+            // 符合条件执行
+            if( _ifChoiced )
+            {
+                var _table_list = $( '#table_list' );
+                var _origin = _table_list.attr( 'ui-extend' );
+                _origin = JSON.parse( _origin );
+                _origin[0]['value'] = isChoiced;
+                _origin[0]['name'] = _ifChoiced;
+
+                $( this ).attr( 'data-column', JSON.stringify( _origin ) );
+
+                column_filter.modal( 'hide' );
+            }
+        } );
+    } );
+</script>

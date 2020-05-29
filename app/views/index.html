@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en" class="">
+<head>
+    <meta charset="utf-8" />
+    <title>数据中心 | BI</title>
+    <meta name="description" content="" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <link rel="stylesheet" href="/assets/libs/assets/animate.css/animate.css" type="text/css" />
+    <link rel="stylesheet" href="/assets/libs/assets/font-awesome/css/font-awesome.min.css" type="text/css" />
+    <link rel="stylesheet" href="/assets/libs/assets/simple-line-icons/css/simple-line-icons.css" type="text/css" />
+    <link rel="stylesheet" href="/assets/libs/jquery/bootstrap/dist/css/bootstrap.min.css" type="text/css" />
+    <link rel="stylesheet" href="/assets/css/font.css" type="text/css" />
+    <link rel="stylesheet" href="/assets/css/app.css" type="text/css" />
+    <link rel='stylesheet' href='/assets/libs/jquery/toastr/toastr.min.css' type='text/css'>
+    <link rel='stylesheet' href='/assets/libs/jquery/fakeLoader/fakeLoader.css' type='text/css'>
+
+    <script src="/assets/libs/jquery/jquery/dist/jquery.js"></script>
+    <script src="/assets/libs/jquery/bootstrap/dist/js/bootstrap.min.js"></script>
+</head>
+<body>
+<div class="app app-header-fixed app-aside-fixed">
+
+
+    <!-- header -->
+    {{ partial("dashboard/header", ['data': common]) }}
+    <!-- / header -->
+
+
+    <!-- aside -->
+    {{ partial("dashboard/sidebar", ['data': common]) }}
+    <!-- / aside -->
+
+
+    <!-- content -->
+    <div id="content" class="app-content" role="main">
+        {{content()}}
+    </div>
+    <!-- /content -->
+
+    <!-- footer -->
+    {{ partial("dashboard/footer", ['data': common]) }}
+    <!-- / footer -->
+
+
+
+</div>
+<div class="fakeloader" data-status="init"></div>
+
+<script src="/assets/js/ui-load.js"></script>
+<script src="/assets/js/ui-jp.config.js"></script>
+<script src="/assets/js/ui-jp.js"></script>
+<script src="/assets/js/ui-nav.js"></script>
+<script src="/assets/js/ui-toggle.js"></script>
+<script src="/assets/js/ui-client.js"></script>
+
+<script src="/assets/js/common.js?time=20170731"></script>
+<script src="/assets/js/jquery.pjax.js"></script>
+
+<script src='/assets/libs/jquery/toastr/toastr.min.js' type='text/javascript'></script>
+<script src='/assets/libs/jquery/fakeLoader/fakeLoader.js' type='text/javascript'></script>
+<script src='/assets/libs/jquery/underscore/underscore.min.js' type='text/javascript'></script>
+<script type="text/javascript">
+    $(document).pjax('[data-pjax] a, a[data-pjax]', '#content', {
+        cache: false,
+        timeout: 50000
+    });
+    $(document).on('submit', 'form[data-pjax]', function (event) {
+        $.pjax.submit(event, '#content')
+    });
+
+    // pjax 开始发起 ajax 请求
+    $(document).on('pjax:start', function () {
+    });
+
+    // pjax 完成 ajax 请求
+    $(document).on('pjax:complete', function () {
+        $(".fakeloader").fadeOut(); // 关闭遮罩层
+    });
+
+    // pjax 替换/加载/生成, 页面结束
+    $(document).on('pjax:end', function (event) {
+        pluginReload('#content');
+    });
+
+    //console.log( $.support.pjax );
+
+    // 监听页面内容被 pjax 替换
+    // $("#content").bind("DOMNodeInserted", function (e) {});
+
+    // 监听 pjax 导航切换事件
+    $(document).on('click', 'a[data-pjax]', function (event) {
+        loading();
+    });
+</script>
+
+</body>
+</html>

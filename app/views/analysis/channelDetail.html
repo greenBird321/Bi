@@ -1,0 +1,151 @@
+<style type="text/css">
+    .be_choiced{color: #23b7e5;}
+</style>
+
+<div id="app_content_body" class="app-content-body ">
+    <div class="hbox hbox-auto-xs hbox-auto-sm">
+
+        <!-- main -->
+        <div class="col">
+            <!-- main header -->
+            <div class="bg-light lter b-b wrapper-md">
+                <div class="row">
+                    <div class="col-sm-6 col-xs-12">
+                        <!--<h1 class="m-n font-thin h3 text-black">区域分析</h1>
+                        <small class="text-muted">- 地区数据分析</small>-->
+                    </div>
+                    <div class="col-sm-6 text-right hidden-xs">
+                        <div class="inline m-r text-left">
+                            <a data-pjax href="/Analysis/zone" class="btn m-b-xs btn-sm btn-info btn-addon">
+                                <i class="fa fa-mail-reply-all"></i>返回上一页
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- / main header -->
+            <div class="wrapper-md">
+                <!-- stats -->
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="panel wrapper" style="border-color: #e0dede;">
+                            <label class="i-switch bg-warning pull-right">
+                                <input type="checkbox">
+                                <i></i>
+                            </label>
+                            <h4 class="font-thin m-t-none m-b text-muted">每日概况图表</h4>
+                            <div id="channel_detail" ui-jq="amcharts" ui-options='{{zonesTab}}' ui-config="channel_detail" style="height:246px" ></div>
+                        </div>
+                    </div>
+                </div>
+                <!-- / stats -->
+
+                <!-- / data list -->
+                <div id="data_tab" class="panel panel-default">
+                    <div class="panel-heading" style="border-bottom-width: 0; padding-bottom: 0;">
+                        <h4 style="color: #98a6ad; margin-bottom: 0;">数据内容</h4>
+                    </div>
+                    <div>
+                        <div class="table-responsive">
+                            <table id="table_list" ui-jq="dataTable" ui-options='{
+                                  "columns": [
+                                    {"title":"时间",className:"column_align"},
+                                    {"title":"新增设备",className:"column_align"},
+                                    {"title":"付费设备",className:"column_align"},
+                                    {"title":"付费次数",className:"column_align"},
+                                    {"title":"付费总额",className:"column_align"},
+                                ],
+                                  "data":{{tab_data}},
+                                "paging": false,
+                                "ordering": false,
+                                "searching": false,
+                                "destroy": true
+                            }' ui-extend=[{"bind":"#table_list","click":"#column_oper"}] class="table table-striped b-t b-b">
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <!-- / data list -->
+
+            </div>
+        </div>
+        <!-- / main -->
+
+    </div>
+</div>
+
+<script type="text/javascript">
+    // 图像插件配置
+    var amChartConfig = {};
+    amChartConfig["channel_detail"] = {
+        "type": "serial",
+        "categoryField": "category",
+        "colors": [
+            "#B0DE09",
+            "#0D8ECF",
+            "#2A0CD0",
+            "#CD0D74",
+            "#CC0000",
+            "#00CC00",
+            "#0000CC",
+            "#DDDDDD",
+            "#999999",
+            "#333333",
+            "#990000"
+        ],
+        "startDuration": 1,
+        "categoryAxis": {
+            "gridPosition": "start"
+        },
+        "trendLines": [],
+        "guides": [],
+        "valueAxes": [
+            {
+                "id": "ValueAxis-1",
+                "title": ""
+            }
+        ],
+        "allLabels": [],
+        "balloon": {},
+        "legend": {
+            "enabled": true
+        },
+        "titles": [
+            {
+                "id": "Title-1",
+                "size": 15,
+                "text": ""
+            }
+        ]
+    };
+
+    // 图像插件显示区域配置
+    var chartGraphsTmp = {};
+    chartGraphsTmp["channel_detail"] = {
+        "balloonText": "[[title]] of [[category]]:[[value]]",
+        "type": "smoothedLine",
+        "fillAlphas": 0.7,
+        "id": "AmGraph-1",
+        "lineAlpha": 0,
+        "title": "graph 1",
+        "valueField": "column-1"
+    };
+
+    // 显示区域数据模型
+    var chartTmpDetail = {};
+    chartTmpDetail["channel_detail"] = JSON.parse( '' +
+        '[{"id":"new_device","field":"new_device","title":"新增设备"},' +
+        '{"id":"pay_device","field":"pay_device","title":"付费设备数"},' +
+        '{"id":"pay_count","field":"pay_count","title":"付费次数"},' +
+        '{"id":"pay_amount","field":"pay_amount","title":"付费总额"}]' );
+
+    $( document ).ready( function()
+    {
+        // 监听 bootstrap collapse 事件, 并相应添加自定义处理
+        $( 'body' ).on( 'click.collapse.data-api', '[data-toggle=collapse]', function( e )
+        {
+            $( 'body' ).find( '[data-toggle=collapse]' ).each( function(){} );
+        } );
+    } );
+</script>

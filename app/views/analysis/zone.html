@@ -1,0 +1,529 @@
+<style type="text/css">
+    .be_choiced{color: #23b7e5;}
+    .column_align{text-align: center;}
+</style>
+
+<div id="app_content_body" class="app-content-body ">
+    <div class="hbox hbox-auto-xs hbox-auto-sm">
+
+        <!-- main -->
+        <div class="col">
+            <!-- main header -->
+            <div class="bg-light lter b-b wrapper-md">
+                <div class="row">
+                    <div class="col-sm-6 col-xs-12">
+                        <h1 class="m-n font-thin h3 text-black">区域分析</h1>
+                        <small class="text-muted">- 地区数据分析</small>
+                    </div>
+                    <div class="col-sm-6 text-right hidden-xs">
+                        <div class="inline m-r text-left">
+                            <button class="btn m-b-xs btn-sm btn-primary btn-addon" data-toggle="modal" data-target="#data_filter">
+                                <i class="glyphicon glyphicon-filter"></i>数据筛选
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- / main header -->
+            <div class="wrapper-md">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="tab-container">
+                            <ul class="nav nav-tabs">
+                                <li class="active"><a href="javascript:void(0);" data-toggle="tab" data-target="#tab_1">新增设备</a></li>
+                                <li><a href="javascript:void(0);" data-toggle="tab" data-target="#tab_2">付费设备</a></li>
+                                <li><a href="javascript:void(0);" data-toggle="tab" data-target="#tab_3">付费次数</a></li>
+                                <li><a href="javascript:void(0);" data-toggle="tab" data-target="#tab_4">付费总额</a></li>
+                            </ul>
+                            <div class="tab-content">
+                                <div class="tab-pane active" id="tab_1">
+                                    <!-- new device stats -->
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="panel wrapper">
+                                                <label class="i-switch bg-warning pull-right">
+                                                    <input type="checkbox">
+                                                    <i></i>
+                                                </label>
+                                                <h4 class="font-thin m-t-none m-b text-muted">新增设备-地域划分</h4>
+                                                <div id="new_device" ui-jq="amcharts" ui-options='{{new_device}}'
+                                                     ui-config="new_device" ui-skip="/Analysis/channelDetail/zone?area" style="height:346px" ></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- / new device stats -->
+                                </div>
+                                <div class="tab-pane" id="tab_2">
+                                    <!-- pay device stats -->
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="panel wrapper">
+                                                <label class="i-switch bg-warning pull-right">
+                                                    <input type="checkbox">
+                                                    <i></i>
+                                                </label>
+                                                <h4 class="font-thin m-t-none m-b text-muted">付费设备-地域划分</h4>
+                                                <div id="pay_device" ui-jq="amcharts" ui-options='{{pay_device}}'
+                                                     ui-config="pay_device" ui-skip="/Analysis/channelDetail/zone?area" style="height:346px" ></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- / pay device stats -->
+                                </div>
+                                <div class="tab-pane" id="tab_3">
+                                    <!-- pay count stats -->
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="panel wrapper">
+                                                <label class="i-switch bg-warning pull-right">
+                                                    <input type="checkbox">
+                                                    <i></i>
+                                                </label>
+                                                <h4 class="font-thin m-t-none m-b text-muted">付费次数-地域划分</h4>
+                                                <div id="pay_count" ui-jq="amcharts" ui-options='{{pay_count}}'
+                                                     ui-config="pay_count" ui-skip="/Analysis/channelDetail/zone?area" style="height:346px" ></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- / pay count stats -->
+                                </div>
+                                <div class="tab-pane" id="tab_4">
+                                    <!-- pay count stats -->
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="panel wrapper">
+                                                <label class="i-switch bg-warning pull-right">
+                                                    <input type="checkbox">
+                                                    <i></i>
+                                                </label>
+                                                <h4 class="font-thin m-t-none m-b text-muted">付费总额-地域划分</h4>
+                                                <div id="pay_amount" ui-jq="amcharts" ui-options='{{pay_amount}}'
+                                                     ui-config="pay_amount" ui-skip="/Analysis/channelDetail/zone?area" style="height:346px" ></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- / pay count stats -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- / data list -->
+                <div id="data_tab" class="panel panel-default">
+                    <div class="panel-heading" style="border-bottom-width: 0; padding-bottom: 0;">
+                        <h4 style="color: #98a6ad; margin-bottom: 0;">数据内容</h4>
+                    </div>
+                    <div>
+                        <div class="table-responsive">
+                            <table id="table_list" ui-jq="dataTable" ui-options='{
+                                "columns": [
+                                    {"title":"地区",className:"column_align"},
+                                    {"title":"新增设备",className:"column_align"},
+                                    {"title":"付费设备",className:"column_align"},
+                                    {"title":"付费次数",className:"column_align"},
+                                    {"title":"付费总额",className:"column_align"},
+                                ],
+                                "data": {{zones}},
+                                "paging": false,
+                                "ordering": false,
+                                "searching": false,
+                                "destroy": true
+                            }' ui-extend=[{"bind":"#table_list","click":"#column_oper"}] class="table table-striped b-t b-b">
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <!-- / data list -->
+
+            </div>
+        </div>
+        <!-- / main -->
+
+    </div>
+</div>
+
+<div class="modal fade" id="data_filter" tabindex="-1" role="dialog" aria-labelledby="data_label" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="data_form" action="/Analysis/zone" method="POST" data-pjax >
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title" id="data_label">
+                    筛选条件选择
+                </h4>
+            </div>
+            <div class="modal-body">
+                <div class="panel-group" id="accordion">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                                <a data-toggle="collapse" data-parent="#accordion" href="#collapse_date">
+                                    时间:
+                                </a>
+                            </h4>
+                        </div>
+                        <div id="collapse_date" class="panel-collapse collapse in">
+                            <div class="panel-body">
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label" style="margin-top: 16px;">开始时间: </label>
+                                    <div class="col-sm-9">
+                                        <div class="input-group w-md">
+                                            <input type="text" id="start_time" class="form-control" style="margin-top: 10px;" placeholder="{{start_time}}" value="{{start_time}}" ui-jq="datepicker" ui-options="{
+                                            format: 'yyyy-mm-dd',
+                                            language: 'zh-CN',
+                                            autoclose: true,
+                                            clearBtn: true,
+                                            todayBtn: true,
+                                            }" class="form-control w-md" name="start_time" readonly />
+                                            <span class="input-group-btn">
+                                                <button type="button" class="btn btn-default"  style="margin-top: 10px;"><i class="glyphicon glyphicon-calendar"></i></button>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label" style="margin-top: 16px;">结束时间: </label>
+                                    <div class="col-sm-9">
+                                        <div class="input-group w-md">
+                                            <input type="text" id="end_time" class="form-control" style="margin-top: 10px;" placeholder="{{end_time}}" value="{{end_time}}" ui-jq="datepicker" ui-options="{
+                                            format: 'yyyy-mm-dd',
+                                            language: 'zh-CN',
+                                            autoclose: true,
+                                            clearBtn: true,
+                                            todayBtn: true,
+                                            }" class="form-control w-md" name="end_time" readonly />
+                                            <span class="input-group-btn">
+                                                <button type="button" class="btn btn-default"  style="margin-top: 10px;"><i class="glyphicon glyphicon-calendar"></i></button>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                                <a data-toggle="collapse" data-parent="#accordion" href="#collapse_states">
+                                    国家:
+                                </a>
+                            </h4>
+                        </div>
+                        <div id="collapse_states" class="panel-collapse collapse">
+                            <div class="panel-body">
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label" style="padding-top: 7px;">选择: </label>
+                                    <div class="col-sm-10">
+                                        <div class="checkbox">
+                                            <label class="checkbox-inline i-checks">
+                                                <input class="check-all" data-target="collapse_states" type="radio" value="all" name="state_func" />
+                                                <i></i>
+                                                全选
+                                            </label>
+                                            <label class="checkbox-inline i-checks">
+                                                <input class="check-cancel" data-target="collapse_states" type="radio" value="cancel" name="state_func" />
+                                                <i></i>
+                                                取消
+                                            </label>
+                                        </div>
+                                        <div class="line line-dashed b-b line-lg pull-in"></div>
+
+                                        {% for index,detail in states %}
+                                        <label class="checkbox-inline i-checks" style="margin-left: 0; margin-right: 10px;">
+                                            <input type="checkbox" value="{{detail['name']}}" name="choice_states[]" />
+                                            <i></i>
+                                            {{detail['ch']}}
+                                        </label>
+                                        {% endfor %}
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">返回</button>
+                <button type="button" class="btn btn-primary" id="confirm_filter">确定</button>
+            </div>
+            </form>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+
+<script type="text/javascript">
+    var amChartConfig = {
+        "new_device" :{
+            "type": "pie",
+            "angle": 50,
+            "balloonText": "[[title]]<br><span style='font-size:14px'><b>[[value]]</b> ([[percents]]%)</span>",
+            "depth3D": 10,
+            "colors": [
+                "#B0DE09",
+                "#04D215",
+                "#0D8ECF",
+                "#0D52D1",
+                "#2A0CD0",
+                "#8A0CCF",
+                "#CD0D74",
+                "#754DEB",
+                "#DDDDDD",
+                "#999999",
+                "#333333",
+                "#000000",
+                "#57032A",
+                "#CA9726",
+                "#990000",
+                "#4B0C25"
+            ],
+            "titleField": "category",
+            "valueField": "value",
+            "allLabels": [],
+            "balloon": {},
+            "legend": {
+                "enabled": true,
+                "align": "center",
+                "markerType": "circle"
+            },
+            "titles": [],
+            "listeners": [{                                     // 事件监听, 可绑定 click 等
+                "event": "clickSlice",
+                "method": function(e) {
+                    var dp = e.dataItem.dataContext;
+
+                    $( '#'+dp["id"] ).click();                  // 自动触发跳转
+                    e.chart.validateData();                     // 取消原始行为
+                }
+            }]
+        },
+        "pay_device" :{
+            "type": "pie",
+            "angle": 50,
+            "balloonText": "[[title]]<br><span style='font-size:14px'><b>[[value]]</b> ([[percents]]%)</span>",
+            "depth3D": 10,
+            "colors": [
+                "#B0DE09",
+                "#04D215",
+                "#0D8ECF",
+                "#0D52D1",
+                "#2A0CD0",
+                "#8A0CCF",
+                "#CD0D74",
+                "#754DEB",
+                "#DDDDDD",
+                "#999999",
+                "#333333",
+                "#000000",
+                "#57032A",
+                "#CA9726",
+                "#990000",
+                "#4B0C25"
+            ],
+            "titleField": "category",
+            "valueField": "value",
+            "allLabels": [],
+            "balloon": {},
+            "legend": {
+                "enabled": true,
+                "align": "center",
+                "markerType": "circle"
+            },
+            "titles": [],
+            "listeners": [{                                     // 事件监听, 可绑定 click 等
+                "event": "clickSlice",
+                "method": function(e) {
+                    var dp = e.dataItem.dataContext;
+
+                    $( '#'+dp["id"] ).click();                  // 自动触发跳转
+                    e.chart.validateData();                     // 取消原始行为
+                }
+            }]
+        },
+        "pay_count" :{
+            "type": "pie",
+            "angle": 50,
+            "balloonText": "[[title]]<br><span style='font-size:14px'><b>[[value]]</b> ([[percents]]%)</span>",
+            "depth3D": 10,
+            "colors": [
+                "#B0DE09",
+                "#04D215",
+                "#0D8ECF",
+                "#0D52D1",
+                "#2A0CD0",
+                "#8A0CCF",
+                "#CD0D74",
+                "#754DEB",
+                "#DDDDDD",
+                "#999999",
+                "#333333",
+                "#000000",
+                "#57032A",
+                "#CA9726",
+                "#990000",
+                "#4B0C25"
+            ],
+            "titleField": "category",
+            "valueField": "value",
+            "allLabels": [],
+            "balloon": {},
+            "legend": {
+                "enabled": true,
+                "align": "center",
+                "markerType": "circle"
+            },
+            "titles": [],
+            "listeners": [{                                     // 事件监听, 可绑定 click 等
+                "event": "clickSlice",
+                "method": function(e) {
+                    var dp = e.dataItem.dataContext;
+
+                    $( '#'+dp["id"] ).click();                  // 自动触发跳转
+                    e.chart.validateData();                     // 取消原始行为
+                }
+            }]
+        },
+        "pay_amount" :{
+            "type": "pie",
+            "angle": 50,
+            "balloonText": "[[title]]<br><span style='font-size:14px'><b>[[value]]</b> ([[percents]]%)</span>",
+            "depth3D": 10,
+            "colors": [
+                "#B0DE09",
+                "#04D215",
+                "#0D8ECF",
+                "#0D52D1",
+                "#2A0CD0",
+                "#8A0CCF",
+                "#CD0D74",
+                "#754DEB",
+                "#DDDDDD",
+                "#999999",
+                "#333333",
+                "#000000",
+                "#57032A",
+                "#CA9726",
+                "#990000",
+                "#4B0C25"
+            ],
+            "titleField": "category",
+            "valueField": "value",
+            "allLabels": [],
+            "balloon": {},
+            "legend": {
+                "enabled": true,
+                "align": "center",
+                "markerType": "circle"
+            },
+            "titles": [],
+            "listeners": [{                                     // 事件监听, 可绑定 click 等
+                "event": "clickSlice",
+                "method": function(e) {
+                    var dp = e.dataItem.dataContext;
+
+                    $( '#'+dp["id"] ).click();                  // 自动触发跳转
+                    e.chart.validateData();                     // 取消原始行为
+                }
+            }]
+        }
+    };
+
+    $( document ).ready( function()
+    {
+        // 全选
+        $( '.check-all' ).click( function()
+        {
+            var target = $( this ).attr( "data-target" );
+            $( '#'+target ).find( 'input[type="checkbox"]' ).each( function()
+            {
+                $( this ).prop( "checked", true );
+            } );
+        } );
+
+        // 取消全选
+        $( '.check-cancel' ).click( function()
+        {
+            var target = $( this ).attr( "data-target" );
+            $( '#'+target ).find( 'input[type="checkbox"]' ).each( function()
+            {
+                $( this ).prop( "checked", false );
+            } );
+        } );
+
+        // 数据过滤表单提交
+        $( '#confirm_filter' ).click( function()
+        {
+            var _form = $( '#data_form' );
+
+            $('.modal').map(function() {
+                $(this).modal('hide');
+                $('.modal-backdrop').remove();
+                $("body").removeClass("modal-open");
+            });
+
+            loading();
+            _form.submit();
+        } );
+
+        // 监听 bootstrap collapse 事件, 并相应添加自定义处理
+        $( 'body' ).on( 'click.collapse.data-api', '[data-toggle=collapse]', function( e )
+        {
+            var _that = $( this );
+
+            $( 'body' ).find( '[data-toggle=collapse]' ).each( function()
+            {
+                var href = $( this ).attr( 'href'),
+                    _that = $( this );
+                var tmp = '[<span class="be_choiced">{replace}</span>]';
+
+                switch( href )
+                {
+                    case '#collapse_date':
+                        var _start_time = $( '#start_time' ),
+                            _end_time = $( '#end_time' );
+
+                        if( _start_time.val() != '' && _end_time.val() != '' )
+                        {
+                            _that.html( '时间: ' + tmp.replace( '{replace}', _start_time.val()+' - '+_end_time.val() ) );
+                        }
+                        else
+                        {
+                            _that.html( '时间:' );
+                        }
+                    break;
+                    case '#collapse_states':
+                        var _state = '';
+
+                        $( '#collapse_states' ).find( 'input[name="choice_states[]"]' ).each( function()
+                        {
+                            if( $( this ).is( ':checked' ) )
+                            {
+                                _state.push( $( this ).val() );
+                            }
+                        } );
+
+                        if( _state.length >= 1 )
+                        {
+                            if( _state.length >= 6 )
+                            {
+                                _that.html( '选中地区: ' + tmp.replace( '{replace}', '6+' ) );
+                            }
+                            else
+                            {
+                                _that.html( '选中地区: ' + tmp.replace( '{replace}', _state.join() ) );
+                            }
+                        }
+                        else
+                        {
+                            _that.html( '地区:' );
+                        }
+                    break;
+                }
+            } );
+        } );
+    } );
+</script>

@@ -1,0 +1,144 @@
+<div class="app-content-body ">
+    <div class="hbox hbox-auto-xs hbox-auto-sm">
+        <div class="col w-xl bg-light dk b-r bg-auto" id="aside">
+            <div class="wrapper bg b-b">
+                <h3 class="m-n font-thin">预警设置</h3>
+            </div>
+            <div class="wrapper">
+                <form class="ng-pristine ng-valid">
+                    <div class="form-group">
+                        <label>标题: </label>
+                        <input type="url" class="form-control" placeholder="20字限制" >
+                    </div>
+                    <div class="form-group">
+                        <label>预警项目: </label>
+                        <select id="server_list" ui-jq="chosen" class="w-full">
+                            <option value="init"> -- 请选择</option>
+                            <option value="1">活跃</option>
+                            <option value="2">收入</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>预警周期/天: </label>
+                        <input ui-jq="TouchSpin" type="text" value="10" class="form-control" data-min='0' data-max="20" data-verticalbuttons="true" data-verticalupclass="fa fa-caret-up"  data-verticaldownclass="fa fa-caret-down">
+                    </div>
+                    <div class="form-group">
+                        <label>阈值: </label>
+                        <input ui-jq="TouchSpin" type="text" value="10" class="form-control" data-min='0' data-max="20" data-verticalbuttons="true" data-verticalupclass="fa fa-caret-up"  data-verticaldownclass="fa fa-caret-down">
+                    </div>
+                    <div class="form-group">
+                        <label>简述</label>
+                        <textarea class="form-control" rows="6" placeholder="200字限制" style="resize: none;"></textarea>
+                    </div>
+
+                    <div class="m-t-md m-b-md pull-right"><button class="btn btn-sm btn-primary">订阅</button></div>
+                </form>
+            </div>
+        </div>
+
+        <!-- main -->
+        <div class="col">
+            <div class="wrapper-md">
+                <!-- stats -->
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="panel wrapper" style="border-color: #e0dede;">
+                            <h4 class="font-thin m-t-none m-b text-muted">预警记录</h4>
+                            <div class="section row mb15">
+                                <div id="list_box" class="col-md-12">
+                                    <div class="app-content-body ">
+                                        <div class="wrapper-md">
+                                            <form action="#" class="m-b-md">
+                                                <div class="input-group">
+                                                    <input type="text" class="form-control input-lg" placeholder="">
+                                                    <span class="input-group-btn">
+                                                        <button class="btn btn-lg btn-default" type="button">搜索</button>
+                                                    </span>
+                                                </div>
+                                            </form>
+                                            <p class="m-b-md">共<strong>23</strong> 条记录</p>
+                                            <div class="tab-container">
+                                                <ul class="nav nav-tabs">
+                                                    <li class="active"><a href data-toggle="tab" data-target="#tab_all">全部 <span class="badge badge-sm m-l-xs">3</span></a></li>
+                                                    <li><a href data-toggle="tab" data-target="#tab_valid">正常 <span class="badge bg-danger badge-sm m-l-xs">2</span></a></li>
+                                                    <li><a href data-toggle="tab" data-target="#tab_invalid">失效 <span class="badge bg-primary badge-sm m-l-xs">1</span></a></li>
+                                                </ul>
+                                                <div class="tab-content">
+                                                    <div class="tab-pane active" id="tab_all">
+                                                        <ul class="list-group list-group-lg no-borders pull-in m-b-none">
+                                                            <li class="list-group-item">
+                                                                <a href="#" class="h4 text-primary m-b-sm block">收入低于15%预警</a>
+
+                                                                <p class="b wrapper-sm pos-rlt bg-light r r-2x">
+                                                                    <span class="arrow top pull-left arrow-light"></span>
+                                                                    从 2017-03-31 开始, 30 天内每天进行收入低于15%预警。
+                                                                </p>
+                                                            </li>
+                                                            <li class="list-group-item">
+                                                                <a href="#" class="h4 text-primary m-b-sm block">活跃用户过低预警</a>
+
+                                                                <p class="b wrapper-sm pos-rlt bg-info r r-2x">
+                                                                    <span class="arrow top pull-left arrow-info"></span>
+                                                                    从 2017-04-03 开始, 10 天内每天进行活跃用户低于15%预警。
+                                                                </p>
+                                                            </li>
+                                                            <li class="list-group-item">
+                                                                <a href="#" class="h4 text-primary m-b-sm block">新增设备过低预警</a>
+                                                                <p class="b wrapper-md pos-rlt bg-light r r-2x">
+                                                                    <span class="arrow top pull-left arrow-light"></span>
+                                                                    从 2017-02-01 开始, 20 天内每天进行活跃用户低于15%预警。
+                                                                </p>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                    <div class="tab-pane" id="tab_valid">
+                                                        <ul class="list-group list-group-lg no-borders pull-in m-b-none">
+                                                            <li class="list-group-item">
+                                                                <a href="#" class="h4 text-primary m-b-sm block">收入低于15%预警</a>
+
+                                                                <p class="b wrapper-sm pos-rlt bg-light r r-2x">
+                                                                    <span class="arrow top pull-left arrow-light"></span>
+                                                                    从 2017-03-31 开始, 30 天内每天进行收入低于15%预警。
+                                                                </p>
+                                                            </li>
+                                                            <li class="list-group-item">
+                                                                <a href="#" class="h4 text-primary m-b-sm block">活跃用户过低预警</a>
+
+                                                                <p class="b wrapper-sm pos-rlt bg-info r r-2x">
+                                                                    <span class="arrow top pull-left arrow-info"></span>
+                                                                    从 2017-04-03 开始, 10 天内每天进行活跃用户低于15%预警。
+                                                                </p>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                    <div class="tab-pane" id="tab_invalid">
+                                                        <div class="alert alert-warning alert-dismissable">
+                                                            <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+                                                            失效的预警信息将会在 <a class="text-danger" href="javascript: void(0);">3天后</a> 自动删除..
+                                                        </div>
+                                                        <ul class="list-group list-group-lg no-borders pull-in m-b-none">
+                                                            <li class="list-group-item">
+                                                                <a href="#" class="h4 text-primary m-b-sm block">新增设备过低预警</a>
+                                                                <p class="b wrapper-md pos-rlt bg-light r r-2x">
+                                                                    <span class="arrow top pull-left arrow-light"></span>
+                                                                    从 2017-02-01 开始, 20 天内每天进行活跃用户低于15%预警。
+                                                                </p>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <!-- / main -->
+
+    </div>
+</div>
