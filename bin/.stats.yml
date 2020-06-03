@@ -1,0 +1,44 @@
+# 数据源配置
+db_account:
+    adapter     : Mysql
+    host        :
+    port        :
+    user        :
+    pass        :
+    dbname      :
+    charset     : utf8mb4
+
+db_trade:
+    adapter     : Mysql
+    host        :
+    port        :
+    user        :
+    pass        :
+    dbname      :
+    charset     : utf8mb4
+
+db_logs:
+    adapter     : Mysql
+    host        :
+    port        :
+    user        :
+    pass        :
+    dbname      :
+    charset     : utf8mb4
+
+# 结果存储
+db_bi:
+    adapter     : Mysql
+    host        :
+    port        :
+    user        :
+    pass        :
+    dbname      :
+    charset     : utf8mb4
+
+# Redis
+redis:
+    host  : 127.0.0.1
+    pass  :
+    port  : 6379
+    db    : 1
