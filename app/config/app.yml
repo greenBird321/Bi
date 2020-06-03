@@ -1,0 +1,67 @@
+setting:
+    sandbox         : true
+    security_plugin : 2
+    request_log     : false
+    sql_log         : false
+    timezone        : PRC
+    cache_time      : 600
+    secret_key      : gqD8iM6pjJ
+    app_id          : bi
+
+db_data:
+    adapter     : Mysql
+    host        : localhost
+    port        : 3306
+    username    : root
+    password    : root
+    dbname      : v3-bi
+    charset     : utf8mb4
+
+db_top:
+    adapter     : Mysql
+    host        : localhost
+    port        : 3306
+    username    : root
+    password    : root
+    dbname      : v3-top
+    charset     : utf8mb4
+
+db_log:
+    adapter     : Mysql
+    host        : localhost
+    port        : 3306
+    username    : root
+    password    : root
+    dbname      : v3-logs
+    charset     : utf8mb4
+
+db_trade:
+    adapter     : Mysql
+    host        : localhost
+    port        : 3306
+    username    : root
+    password    : root
+    dbname      : v3-trade
+    charset     : utf8mb4
+
+redis:
+    host        : 127.0.0.1
+    password    :
+    port        : 6379
+    index       : 1
+    prefix      : cache_
+
+mq:
+    host        :
+    port        :
+    username    :
+    password    :
+    vhost       :
+
+sso:
+    base_url    : http://v3-top.com/api/sso/
+    api_url     : http://v3-top.com/api/synchro
+    sessionlog_url : http://v3-top.com/api/sessionlog
+
+rpc:
+    url         : v3-rpc.com/
