@@ -20,6 +20,7 @@ class Stats
     private $month;
     private $cfg;
     private $retention_days = [0, 1, 2, 3, 4, 5, 6, 13, 29, 59];
+    private $infiltration_days = [0, 1, 2, 3, 4, 5, 6];
     private $_redis;
 
 
@@ -64,6 +65,16 @@ class Stats
         $retention = $this->statsRetentionUser();
         $this->saveToBI($retention, 'retention_user');
 
+        // 付费渗透
+        $this->logger('analysis payment infiltration');
+        $infiltration = $this->statsInfiltration();
+        $this->saveToBI($infiltration, 'infiltration');
+
+        // 回访数据
+        $this->logger('analysis user lost');
+        $userLost = $this->statsUserLost();
+        $this->saveToBI($userLost, 'user_lost');
+
         $this->takeUp();
     }
 
@@ -103,6 +114,13 @@ class Stats
             $table = 'retention_user';
         }
 
+        if ($type == 'infiltration') {
+            $table = 'payment_infiltration';
+        }
+
+        if ($type == 'user_lost') {
+            $table = 'user_lost';
+        }
 
         // 插入新数据
         $sql = '';
@@ -114,10 +132,8 @@ class Stats
                 }
                 return true;
             });
-
-
             // 日期
-            if ($type == 'retention' || $type == 'retention_user') {
+            if ($type == 'retention' || $type == 'retention_user' || $type == 'infiltration' || $type == 'user_lost') {
                 // 删除旧数据
                 $sqlDelete = "DELETE FROM $table WHERE `date`='{$value['date']}' AND days='{$value['days']}'";
                 $this->db('bi')->exec($sqlDelete);
@@ -134,6 +150,7 @@ class Stats
             $v = "'" . implode("','", $v) . "'";
             $sql .= "INSERT INTO `{$table}` ($k) VALUES ($v);";
         }
+
         $this->db('bi')->exec($sql);
     }
 
@@ -154,6 +171,243 @@ class Stats
     {
     }
 
+    /**
+     * 用户回访 todo sql没问题，现在php有问题
+     */
+    public function statsUserLost()
+    {
+        // 计算 - 新增账号
+        foreach ($this->infiltration_days as $day) {
+            $stats_day = date('Y-m-d', strtotime("{$this->date} - {$day} day"));
+            $stats_day_trim = str_replace('-', '', $stats_day);
+            $k_new = ':'. $stats_day_trim . ':user_id:new:';
+            $keys = $this->redis()->keys('*' . $k_new . '*');
+            if (!$keys) {
+                $newUser_list = $this->_getNewUser();
+                if ($newUser_list) {
+                    foreach ($newUser_list as $device) {
+                        $app_id = $device['app_id'];
+                        $channel = $device['channel'];
+                        $os = $device['device'];
+                        $this->redis()->sAdd($app_id . $k_new . $channel . ':' . $os, $device['uuid']);
+                    }
+                }
+            }
+            foreach ($keys as $k => $key) {
+                $app_id                              = explode(':', $key)[0];
+                $accounts[$app_id . ':' . $stats_day][] = [
+                    'user_id' => $this->redis()->sMembers($key),
+                    'app_id' => $app_id,
+                    'new_user_count' => $this->redis()->sCard($key),
+                    'days' => $day,
+                    'date' => $stats_day,
+                ];
+            }
+
+            // 数据补全
+//            foreach ($accounts as $key => $value) {
+//                foreach ($value as $k => $v) {
+//                    if (!isset($v['date'])) {
+//                        $accounts[$app_id][] = [
+//                            'user_id' => [],
+//                            'app_id' => $app_id,
+//                            'new_user_count' => 0,
+//                            'days' => $day,
+//                            'date' => $stats_day,
+//                        ];
+//                    }
+//                }
+//            }
+
+        }
+
+        // 计算 - 用户流失
+        foreach ($accounts as $key => $account) {
+            // 计算用户流失的时候 数据补全
+//           foreach ($account as $k => $v) {
+//               // 说明当日并无新增，也没有流失一说
+//               if ($v['new_user_count'] == 0) {
+//                   $result[] = [
+//                       'app_id' => $v['app_id'],
+//                       'new_user_count' => $v['new_user_count'],
+//                       'lost_user_count' => 0,
+//                       'days' => $v['days'],
+//                       'date' => $v['date']
+//                   ];
+//                   continue;
+//               }
+//           }
+
+
+            $this->db('logs')->exec('drop table if exists temp_tb');
+            $this->db('logs')->exec('CREATE TABLE temp_tb(user_id int not null default 0, app_id int not null default 0, create_time date not null)');
+            $sql = 'INSERT INTO temp_tb (app_id, user_id, create_time) VALUES ';
+            foreach ($account as $k => $v) {
+                    foreach ($v as $n => $user_id) {
+                        if ($n == 'user_id') {
+                            foreach ($user_id as $data) {
+                                $sql .= '(' . $v['app_id'] . ',' . $data . ',' . "'{$v['date']}'" . '),';
+                            }
+                        }
+                    }
+            }
+            $sql = rtrim($sql, ',');
+            $this->db('logs')->exec($sql);
+            $stats_day = explode(':', $key)[1];
+            // 每日的新增用户 流失(如果当天新注册的用户则代表没有流失)
+            $sql = <<<END
+SELECT
+  app_id,
+	COUNT( DISTINCT user_id ) lost_user_count 
+FROM
+	temp_tb t
+WHERE
+	NOT EXISTS (
+	SELECT
+	  app_id,
+	  user_id
+	FROM
+		`account_login_{$this->month}` a
+	WHERE
+		create_time BETWEEN '{$stats_day} 00:00:00' 
+		AND '{$stats_day} 23:59:59' 
+		AND t.user_id = a.user_id
+) GROUP BY app_id
+END;
+            $query = $this->db('logs')->query($sql);
+            $query->setFetchMode(PDO::FETCH_ASSOC);
+            $lost = $query->fetchAll();
+
+            foreach ($account as $i => $value) {
+                if (!empty($lost)) {
+                    foreach ($lost as $k => $v) {
+                        $result[] = [
+                            'app_id' => $v['app_id'],
+                            'new_user_count' => empty($value['new_user_count']) ? 0 : $value['new_user_count'],
+                            'lost_user_count' => $v['lost_user_count'],
+                            'days' => $value['days'],
+                            'date' => $value['date'],
+                        ];
+                    }
+                } else {
+                    // 如果没有流失用户
+                    $result[] = [
+                        'app_id' => $value['app_id'],
+                        'new_user_count' => empty($value['new_user_count']) ? 0 : $value['new_user_count'],
+                        'lost_user_count' => 0,
+                        'days' => $value['days'],
+                        'date' => $value['date']
+                    ];
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * 统计新增用户的付费渗透
+     */
+    public function statsInfiltration()
+    {
+        // 计算 - 新增账号
+        foreach ($this->infiltration_days as $day) {
+            $stats_day = date('Y-m-d', strtotime("{$this->date} - {$day} day"));
+            $stats_day_trim = str_replace('-', '', $stats_day);
+            $k_new = ':'. $stats_day_trim . ':user_id:new:';
+            $keys = $this->redis()->keys('*' . $k_new . '*');
+            if (!$keys) {
+                $newUser_list = $this->_getNewUser();
+                if ($newUser_list) {
+                    foreach ($newUser_list as $device) {
+                        $app_id = $device['app_id'];
+                        $channel = $device['channel'];
+                        $os = $device['device'];
+                        $this->redis()->sAdd($app_id . $k_new . $channel . ':' . $os, $device['uuid']);
+                    }
+                }
+            }
+            foreach ($keys as $k => $key) {
+                $app_id                              = explode(':', $key)[0];
+                $accounts[$app_id . ':' . $stats_day][] = [
+                    'user_id' => $this->redis()->sMembers($key),
+                    'app_id' => $app_id,
+                    'new_user_count' => $this->redis()->sCard($key),
+                    'days' => $day,
+                    'date' => $stats_day,
+                ];
+            }
+            // 数据补全
+//            foreach ($accounts as $key => $value) {
+//                foreach ($value as $k => $v) {
+//                    if (!isset($v['date'])) {
+//                        $accounts[$app_id][] = [
+//                            'user_id' => [],
+//                            'app_id' => $app_id,
+//                            'new_user_count' => 0,
+//                            'days' => $day,
+//                            'date' => $stats_day,
+//                        ];
+//                    }
+//                }
+//            }
+        }
+
+        foreach ($accounts as $key => $account) {
+            // 计算用户付费
+            $this->db('trade')->exec('drop table if exists temp_tb');
+            $this->db('trade')->exec('CREATE TABLE temp_tb(user_id int not null default 0, app_id int not null default 0, create_time date not null)');
+
+            $sql = "INSERT INTO temp_tb (user_id, app_id, create_time) VALUES ";
+            foreach ($account as $k => $v) {
+                foreach ($v as $i => $user_ids) {
+                    if ($i == 'user_id') {
+                       foreach ($user_ids as $user_id) {
+                           $sql .= '(' . $user_id . ',' . $v['app_id'] . ',' . "'{$v['date']}'" . '),';
+                       }
+                    }
+                }
+            }
+            $sql = rtrim($sql, ',');
+            $this->db('trade')->exec($sql);
+
+            $stats_day = explode(':', $key)[1];
+            $sql = "SELECT
+    a.app_id,
+	SUBSTRING_INDEX( a.custom, '-', 1 ) serverId,
+	SUM( a.amount ) new_user_payment 
+FROM
+	`temp_tb` t
+	RIGHT JOIN `transactions` a ON t.user_id = a.user_id 
+WHERE
+	a.`complete_time` >= '{$stats_day} 00:00:00' 
+	AND a.`complete_time` <= '{$stats_day} 59:59:59' 
+	AND a.`status` = 'complete' 
+	AND a.`app_id` = t.`app_id` 
+GROUP BY
+	SUBSTRING_INDEX(
+		a.custom,
+		'-',
+	1)";
+            $query = $this->db('trade')->query($sql);
+            $query->setFetchMode(PDO::FETCH_ASSOC);
+            $data = $query->fetchAll();
+            foreach ($account as $k => $value) {
+               foreach ($data as $i => $v) {
+                   if ($value['app_id'] == $v['app_id']) {
+                       $result[] = [
+                           'app_id' => $value['app_id'],
+                           'server_id' => $v['serverId'],
+                           'new_user_count' => $value['new_user_count'],
+                           'new_user_payment' => empty($v['new_user_payment']) ? 0 : $v['new_user_payment'],
+                           'days'  => $value['days'],
+                           'date' => $value['date']
+                       ];
+                   }
+               }
+            }
+        }
+        return $result;
+    }
 
     /**
      * 新增设备留存

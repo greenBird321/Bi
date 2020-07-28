@@ -153,6 +153,18 @@ $di->set('dbTop', function () use ($di) {
     return $connection;
 }, true);
 
+$di->set('dbLog', function () use ($di) {
+    $connection = new DbAdapter(array(
+        'host'     => $di['config']->db_log->host,
+        'port'     => $di['config']->db_log->port,
+        'username' => $di['config']->db_log->username,
+        'password' => $di['config']->db_log->password,
+        'dbname'   => $di['config']->db_log->dbname,
+        'charset'  => $di['config']->db_log->charset
+    ));
+    $connection->setEventsManager($di['eventsManager']);
+    return $connection;
+}, true);
 
 // Database Event
 // https://docs.phalconphp.com/zh/latest/reference/dispatching.html#dispatch-loop-events

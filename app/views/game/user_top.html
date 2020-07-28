@@ -11,7 +11,7 @@
             <div class="bg-light lter b-b wrapper-md">
                 <div class="row">
                     <div class="col-sm-6 col-xs-12">
-                        <h1 class="m-n font-thin h3 text-black">新增用户</h1>
+                        <h1 class="m-n font-thin h3 text-black">充值排行</h1>
                         <small class="text-muted">- </small>
                     </div>
                     <div class="col-sm-6 text-right hidden-xs">
@@ -26,33 +26,6 @@
 
             <!-- / main header -->
             <div class="wrapper-md">
-                <!-- stats -->
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="panel wrapper" style="border-color: #e0dede;">
-                            <label class="i-switch bg-warning pull-right">
-                                <input type="checkbox">
-                                <i></i>
-                            </label>
-                            <h4 class="font-thin m-t-none m-b text-muted">新增用户走势图</h4>
-                            <div ui-jq="plot" ui-refresh="showSpline" ui-options='
-                                [{ data: {{image_data}}, label:"TV", points: { show: true, radius: 1}, splines: { show: true, tension: 0.4, lineWidth: 1, fill: 0.8 } }],
-                                {
-                                    "colors": ["#23b7e5", "#7266ba"],
-                                    "series": { "shadowSize": 3 },
-                                    "xaxis":{ "font": { "color": "#a1a7ac" } },
-                                    "yaxis":{ "font": { "color": "#a1a7ac" }, "max":20 },
-                                    "grid": { "hoverable": true, "clickable": true, "borderWidth": 0, "color": "#dce5ec" },
-                                    "tooltip": true,
-                                    "tooltipOpts": { "content": "Visits of %x.1 is %y.4",  "defaultTheme": false, "shifts": { "x": 10, "y": -25 } }
-                                }
-                                ' style="height:246px" >
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- / stats -->
-
                 <!-- / data list -->
                 <div class="panel panel-default">
                     <div class="panel-heading" style="border-bottom-width: 0; padding-bottom: 0;">
@@ -62,10 +35,12 @@
                         <div class="table-responsive">
                             <table id="table_list" ui-jq="dataTable" ui-options='{
                                   "columns": [
-                                    { "title": "新增" },
-                                    { "title": "新增玩家数" }
+                                    { "title": "服务器" },
+                                    { "title": "角色id" },
+                                    { "title": "付费总金额" },
+                                    { "title": "渠道" }
                                   ],
-                                "data": {{table_data}},
+                                  "data": {{ tab_data }},
                                 "paging": false,
                                 "ordering": false,
                                 "searching": false,
@@ -87,7 +62,7 @@
 <div class="modal fade" id="data_filter" tabindex="-1" role="dialog" aria-labelledby="data_label" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <form id="data_form" action="/game/user_new" method="POST" data-pjax >
+            <form id="data_form" action="/game/top" method="POST" data-pjax>
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
                         &times;
@@ -112,13 +87,7 @@
                                         <label class="col-sm-3 control-label" style="margin-top: 16px;">开始时间: </label>
                                         <div class="col-sm-9">
                                             <div class="input-group w-md">
-                                                <input type="text" id="start_time" class="form-control" style="margin-top: 10px;" placeholder="{{start_time}}" value="{{start_time}}" ui-jq="datepicker" ui-options="{
-                                            format: 'yyyy-mm-dd',
-                                            language: 'zh-CN',
-                                            autoclose: true,
-                                            clearBtn: true,
-                                            todayBtn: true,
-                                            }" class="form-control w-md" name="start_time" readonly />
+                                                <input type="text" id="start_time" name="start_time" class="form_datetime form-control" style="margin-top: 10px;" placeholder="{{start_time}}" value="{{start_time}}" />
                                                 <span class="input-group-btn">
                                                 <button type="button" class="btn btn-default"  style="margin-top: 10px;"><i class="glyphicon glyphicon-calendar"></i></button>
                                             </span>
@@ -129,13 +98,7 @@
                                         <label class="col-sm-3 control-label" style="margin-top: 16px;">结束时间: </label>
                                         <div class="col-sm-9">
                                             <div class="input-group w-md">
-                                                <input type="text" id="end_time" class="form-control" style="margin-top: 10px;" placeholder="{{end_time}}" value="{{end_time}}" ui-jq="datepicker" ui-options="{
-                                            format: 'yyyy-mm-dd',
-                                            language: 'zh-CN',
-                                            autoclose: true,
-                                            clearBtn: true,
-                                            todayBtn: true,
-                                            }" class="form-control w-md" name="end_time" readonly />
+                                                <input type="text" id="end_time" name="end_time" class="form_datetime form-control" style="margin-top: 10px;" placeholder="{{end_time}}" value="{{end_time}}" />
                                                 <span class="input-group-btn">
                                                 <button type="button" class="btn btn-default"  style="margin-top: 10px;"><i class="glyphicon glyphicon-calendar"></i></button>
                                             </span>
@@ -158,7 +121,7 @@
                                     <div class="form-group">
                                         <label class="col-sm-2 control-label" style="padding-top: 7px;">选择: </label>
                                         <div class="col-sm-10">
-                                            <select id="server_list" ui-jq="chosen" class="w-full" name="server_id">
+                                            <select id="server_list" ui-jq="chosen" class="w-full">
                                                 <option value="init"> -- 请选择</option>
                                                 <optgroup label="区服列表">
                                                     {% for server_id, server_info in server_list %}
@@ -171,6 +134,33 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">
+                                    <a data-toggle="collapse" data-parent="#accordion" href="#collapse_channel">
+                                        渠道:
+                                    </a>
+                                </h4>
+                            </div>
+                            <div id="collapse_channel" class="panel-collapse collapse">
+                                <div class="panel-body">
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label" style="padding-top: 10px;">选择: </label>
+                                        <div class="col-sm-10">
+                                            {% for value in channel %}
+                                            <div class="checkbox">
+                                                <label class="i-checks">
+                                                    <input type="checkbox" value={{value}} name="choice_channel[]" />
+                                                    <i></i>
+                                                    {{value}}
+                                                </label>
+                                            </div>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -178,22 +168,40 @@
                     <button type="button" class="btn btn-primary" id="confirm_filter">确定</button>
                 </div>
             </form>
-        </div>
-    </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
 </div>
 
 <script type="text/javascript">
-    $( document ).ready( function()
-    {
-        var clear_form = function( addr )
-        {
-            var _form = $( addr );
-            _form.find( 'input' ).each( function( i )
-            {
-                $( this ).attr( 'checked', false );
-            } );
+    $(document).ready(function () {
+        var clear_form = function (addr) {
+            var _form = $(addr);
+            _form.find('input').each(function (i) {
+                $(this).attr('checked', false);
+            });
         };
 
+        // 全选
+        $( '.check-all' ).click( function()
+        {
+            var target = $( this ).attr( "data-target" );
+            $( '#'+target ).find( 'input[type="checkbox"]' ).each( function()
+            {
+                $( this ).prop( "checked", true );
+            } );
+        } );
+
+        // 取消全选
+        $( '.check-cancel' ).click( function()
+        {
+            var target = $( this ).attr( "data-target" );
+            $( '#'+target ).find( 'input[type="checkbox"]' ).each( function()
+            {
+                $( this ).prop( "checked", false );
+            } );
+        } );
+
+        // 数据过滤表单提交
         $( '#confirm_filter' ).click( function()
         {
             var _form = $( '#data_form' );
@@ -209,124 +217,102 @@
         } );
 
         // 解决 chosen 在 model 中不能正常加载问题
-        $( '#data_filter' ).on( 'shown.bs.modal', function ()
-        {
-            $( '#server_list', this ).chosen( 'destroy' ).chosen( {width: "inherit"} );
-        } );
+        $('#data_filter').on('shown.bs.modal', function () {
+            $('#server_list', this).chosen('destroy').chosen({width: "inherit"});
+        });
 
         // 监听 bootstrap collapse 事件, 并相应添加自定义处理
-        $( 'body' ).on( 'click.collapse.data-api', '[data-toggle=collapse]', function( e )
-        {
-            var _that = $( this );
+        $('body').on('click.collapse.data-api', '[data-toggle=collapse]', function (e) {
+            var _that = $(this);
 
-            $( 'body' ).find( '[data-toggle=collapse]' ).each( function()
-            {
-                var href = $( this ).attr( 'href'),
-                    _that = $( this );
+            $('body').find('[data-toggle=collapse]').each(function () {
+                var href = $(this).attr('href'),
+                    _that = $(this);
                 var tmp = '[<span class="be_choiced">{replace}</span>]';
 
-                switch( href )
-                {
+                switch (href) {
                     case '#collapse_date':
-                        var _start_time = $( '#start_time' ),
-                            _end_time = $( '#end_time' );
+                        var _start_time = $('#start_time'),
+                            _end_time = $('#end_time');
 
-                        if( _start_time.val() != '' && _end_time.val() != '' )
-                        {
-                            _that.html( '时间: ' + tmp.replace( '{replace}', _start_time.val()+' - '+_end_time.val() ) );
+                        if (_start_time.val() != '' && _end_time.val() != '') {
+                            _that.html('时间: ' + tmp.replace('{replace}', _start_time.val() + ' - ' + _end_time.val()));
                         }
-                        else
-                        {
-                            /*toastr.options = {
-                                "closeButton": false,
-                                "debug": false,
-                                "newestOnTop": false,
-                                "progressBar": false,
-                                "positionClass": "toast-top-center",
-                                "preventDuplicates": false,
-                                "onclick": null,
-                                "showDuration": "300",
-                                "hideDuration": "1000",
-                                "timeOut": "5000",
-                                "extendedTimeOut": "1000",
-                                "showEasing": "swing",
-                                "hideEasing": "linear",
-                                "showMethod": "fadeIn",
-                                "hideMethod": "fadeOut"
-                            };
-
-                            toastr.info( '时间选择错误, 请检查!' );*/
-                            _that.html( '时间:' );
+                        else {
+                            _that.html('时间:');
                         }
-                    break;
+                        break;
                     case '#collapse_server':
-                        var _val = $( '#server_list' ).chosen().val();
+                        var _val = $('#server_list').chosen().val();
 
-                        if( _val != 'init' )
-                        {
-                            _that.html( '选中区服: ' + tmp.replace( '{replace}', _val ) );
+                        if (_val != 'init') {
+                            _that.html('选中区服: ' + tmp.replace('{replace}', _val));
                         }
-                        else
-                        {
-                            _that.html( '区服:' );
+                        else {
+                            _that.html('区服:');
                         }
-                    break;
+                        break;
                     case '#collapse_os':
                         var _os = [];
 
-                        $( '#collapse_os' ).find( 'input[name="choice_os[]"]' ).each( function()
-                        {
-                            if( $( this ).is( ':checked' ) )
-                            {
-                                _os.push( $( this ).val() );
+                        $('#collapse_os').find('input[name="choice_os[]"]').each(function () {
+                            if ($(this).is(':checked')) {
+                                _os.push($(this).val());
                             }
-                        } );
+                        });
 
-                        if( _os.length >= 1 )
-                        {
-                            if( _os.length >= 6 )
-                            {
-                                _that.html( '选中系统: ' + tmp.replace( '{replace}', '6+' ) );
+                        if (_os.length >= 1) {
+                            if (_os.length >= 6) {
+                                _that.html('选中系统: ' + tmp.replace('{replace}', '6+'));
                             }
-                            else
-                            {
-                                _that.html( '选中系统: ' + tmp.replace( '{replace}', _os.join() ) );
+                            else {
+                                _that.html('选中系统: ' + tmp.replace('{replace}', _os.join()));
                             }
                         }
-                        else
-                        {
-                            _that.html( '系统:' );
+                        else {
+                            _that.html('系统:');
                         }
-                    break;
+                        break;
+                    case '#collapse_state':
+                        var _state = '';
+
+                        console.log($('#collapse_state').find('input[name="choice_state"]:checked').val());
+                        break;
                     case '#collapse_channel':
                         var _channel = [];
 
-                        $( '#collapse_channel' ).find( 'input[name="choice_channel[]"]' ).each( function()
-                        {
-                            if( $( this ).is( ':checked' ) )
-                            {
-                                _channel.push( $( this ).val() );
+                        $('#collapse_channel').find('input[name="choice_channel[]"]').each(function () {
+                            if ($(this).is(':checked')) {
+                                _channel.push($(this).val());
                             }
-                        } );
+                        });
 
-                        if( _channel.length >= 1 )
-                        {
-                            if( _channel.length >= 6 )
-                            {
-                                _that.html( '选中渠道: ' + tmp.replace( '{replace}', '6+' ) );
+                        if (_channel.length >= 1) {
+                            if (_channel.length >= 6) {
+                                _that.html('选中渠道: ' + tmp.replace('{replace}', '6+'));
                             }
-                            else
-                            {
-                                _that.html( '选中渠道: ' + tmp.replace( '{replace}', _channel.join() ) );
+                            else {
+                                _that.html('选中渠道: ' + tmp.replace('{replace}', _channel.join()));
                             }
                         }
-                        else
-                        {
-                            _that.html( '渠道:' );
+                        else {
+                            _that.html('渠道:');
                         }
-                    break;
+                        break;
                 }
-            } );
-        } );
-    } );
+            });
+        });
+
+        $(".form_datetime").datetimepicker({
+            format: "yyyy-mm-dd hh:00:00",
+            autoclose: true,
+            todayBtn: true,
+            todayHighlight: true,
+            showMeridian: true,
+            pickerPosition: "bottom-left",
+            language: 'zh-CN',//中文，需要引用zh-CN.js包
+            startView: 2,//月视图
+            minView: 1//日期时间选择器所能够提供的最精确的时间选择视图
+        });
+    });
 </script>

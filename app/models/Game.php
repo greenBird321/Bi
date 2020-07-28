@@ -96,4 +96,32 @@ class Game extends Base{
 
         return $data;
     }
+
+    public function getPaymentInfiltration($parameter)
+    {
+        $app_id     = $parameter['app_id'];
+        $start_time = $parameter['start_time'];
+        $end_time   = $parameter['end_time'];
+        $server_id  = $parameter['server_id'];
+
+        $sql   = "SELECT `server_id`, `new_user_count`, `new_user_payment`, `days`, `date` FROM `payment_infiltration` WHERE `app_id`={$app_id} and `server_id`={$server_id} AND date BETWEEN '{$start_time}' AND '{$end_time}'";
+        $query = DI::getDefault()->get('dbData')->query($sql);
+        $query->setFetchMode(Db::FETCH_ASSOC);
+        $data = $query->fetchAll();
+        return $data;
+    }
+
+
+    public function getUserLost($parameter)
+    {
+        $app_id     = $parameter['app_id'];
+        $start_time = $parameter['start_time'];
+        $end_time   = $parameter['end_time'];
+
+        $sql   = "SELECT `new_user_count`, `lost_user_count`, `days`, `date` FROM `user_lost` WHERE `app_id`={$app_id} AND date BETWEEN '{$start_time}' AND '{$end_time}'";
+        $query = DI::getDefault()->get('dbData')->query($sql);
+        $query->setFetchMode(Db::FETCH_ASSOC);
+        $data = $query->fetchAll();
+        return $data;
+    }
 }

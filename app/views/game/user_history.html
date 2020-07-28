@@ -11,7 +11,7 @@
             <div class="bg-light lter b-b wrapper-md">
                 <div class="row">
                     <div class="col-sm-6 col-xs-12">
-                        <h1 class="m-n font-thin h3 text-black">新增用户</h1>
+                        <h1 class="m-n font-thin h3 text-black">用户历史在线</h1>
                         <small class="text-muted">- </small>
                     </div>
                     <div class="col-sm-6 text-right hidden-xs">
@@ -26,32 +26,6 @@
 
             <!-- / main header -->
             <div class="wrapper-md">
-                <!-- stats -->
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="panel wrapper" style="border-color: #e0dede;">
-                            <label class="i-switch bg-warning pull-right">
-                                <input type="checkbox">
-                                <i></i>
-                            </label>
-                            <h4 class="font-thin m-t-none m-b text-muted">新增用户走势图</h4>
-                            <div ui-jq="plot" ui-refresh="showSpline" ui-options='
-                                [{ data: {{image_data}}, label:"TV", points: { show: true, radius: 1}, splines: { show: true, tension: 0.4, lineWidth: 1, fill: 0.8 } }],
-                                {
-                                    "colors": ["#23b7e5", "#7266ba"],
-                                    "series": { "shadowSize": 3 },
-                                    "xaxis":{ "font": { "color": "#a1a7ac" } },
-                                    "yaxis":{ "font": { "color": "#a1a7ac" }, "max":20 },
-                                    "grid": { "hoverable": true, "clickable": true, "borderWidth": 0, "color": "#dce5ec" },
-                                    "tooltip": true,
-                                    "tooltipOpts": { "content": "Visits of %x.1 is %y.4",  "defaultTheme": false, "shifts": { "x": 10, "y": -25 } }
-                                }
-                                ' style="height:246px" >
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- / stats -->
 
                 <!-- / data list -->
                 <div class="panel panel-default">
@@ -61,12 +35,14 @@
                     <div>
                         <div class="table-responsive">
                             <table id="table_list" ui-jq="dataTable" ui-options='{
-                                  "columns": [
-                                    { "title": "新增" },
-                                    { "title": "新增玩家数" }
+                                  "columns":[
+                                    { "title": "服务器ID" },
+                                    { "title": "时间(小时)" },
+                                    { "title": "最大在线人数" },
+                                    { "title": "最小在线人数" },
                                   ],
-                                "data": {{table_data}},
-                                "paging": false,
+                                "data": {{tab_data}},
+                                "paging": true,
                                 "ordering": false,
                                 "searching": false,
                                 "destroy": true
@@ -83,11 +59,11 @@
 
     </div>
 </div>
-
+<!-- / main -->
 <div class="modal fade" id="data_filter" tabindex="-1" role="dialog" aria-labelledby="data_label" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <form id="data_form" action="/game/user_new" method="POST" data-pjax >
+            <form id="data_form" action="/game/historyOnline" method="POST" data-pjax >
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
                         &times;
@@ -95,6 +71,9 @@
                     <h4 class="modal-title" id="data_label">
                         筛选条件选择
                     </h4>
+                    <h5 class="modal-title" id="tip_label">
+                        <span style="color: red">注意:查询日期区间不要超过一个月，否则可能造成数据库崩溃</span>
+                    </h5>
                 </div>
                 <div class="modal-body">
                     <div class="panel-group" id="accordion">
@@ -112,13 +91,13 @@
                                         <label class="col-sm-3 control-label" style="margin-top: 16px;">开始时间: </label>
                                         <div class="col-sm-9">
                                             <div class="input-group w-md">
-                                                <input type="text" id="start_time" class="form-control" style="margin-top: 10px;" placeholder="{{start_time}}" value="{{start_time}}" ui-jq="datepicker" ui-options="{
+                                                <input type="text" name="start_time" id="start_time" class="form-control" style="margin-top: 10px;" placeholder="2017-03-28" ui-jq="datepicker" ui-options="{
                                             format: 'yyyy-mm-dd',
                                             language: 'zh-CN',
                                             autoclose: true,
                                             clearBtn: true,
                                             todayBtn: true,
-                                            }" class="form-control w-md" name="start_time" readonly />
+                                            }" class="form-control w-md" readonly />
                                                 <span class="input-group-btn">
                                                 <button type="button" class="btn btn-default"  style="margin-top: 10px;"><i class="glyphicon glyphicon-calendar"></i></button>
                                             </span>
@@ -129,13 +108,13 @@
                                         <label class="col-sm-3 control-label" style="margin-top: 16px;">结束时间: </label>
                                         <div class="col-sm-9">
                                             <div class="input-group w-md">
-                                                <input type="text" id="end_time" class="form-control" style="margin-top: 10px;" placeholder="{{end_time}}" value="{{end_time}}" ui-jq="datepicker" ui-options="{
+                                                <input type="text" name="end_time" id="end_time" class="form-control" style="margin-top: 10px;" placeholder="2017-03-29" ui-jq="datepicker" ui-options="{
                                             format: 'yyyy-mm-dd',
                                             language: 'zh-CN',
                                             autoclose: true,
                                             clearBtn: true,
                                             todayBtn: true,
-                                            }" class="form-control w-md" name="end_time" readonly />
+                                            }" class="form-control w-md" readonly />
                                                 <span class="input-group-btn">
                                                 <button type="button" class="btn btn-default"  style="margin-top: 10px;"><i class="glyphicon glyphicon-calendar"></i></button>
                                             </span>
@@ -181,19 +160,38 @@
         </div>
     </div>
 </div>
+<!-- / main -->
 
 <script type="text/javascript">
-    $( document ).ready( function()
-    {
-        var clear_form = function( addr )
-        {
-            var _form = $( addr );
-            _form.find( 'input' ).each( function( i )
-            {
-                $( this ).attr( 'checked', false );
-            } );
+    $(document).ready(function () {
+        var clear_form = function (addr) {
+            var _form = $(addr);
+            _form.find('input').each(function (i) {
+                $(this).attr('checked', false);
+            });
         };
 
+        // 全选
+        $( '.check-all' ).click( function()
+        {
+            var target = $( this ).attr( "data-target" );
+            $( '#'+target ).find( 'input[type="checkbox"]' ).each( function()
+            {
+                $( this ).prop( "checked", true );
+            } );
+        } );
+
+        // 取消全选
+        $( '.check-cancel' ).click( function()
+        {
+            var target = $( this ).attr( "data-target" );
+            $( '#'+target ).find( 'input[type="checkbox"]' ).each( function()
+            {
+                $( this ).prop( "checked", false );
+            } );
+        } );
+
+        // 数据过滤表单提交
         $( '#confirm_filter' ).click( function()
         {
             var _form = $( '#data_form' );
@@ -209,124 +207,90 @@
         } );
 
         // 解决 chosen 在 model 中不能正常加载问题
-        $( '#data_filter' ).on( 'shown.bs.modal', function ()
-        {
-            $( '#server_list', this ).chosen( 'destroy' ).chosen( {width: "inherit"} );
-        } );
+        $('#data_filter').on('shown.bs.modal', function () {
+            $('#server_list', this).chosen('destroy').chosen({width: "inherit"});
+        });
 
         // 监听 bootstrap collapse 事件, 并相应添加自定义处理
-        $( 'body' ).on( 'click.collapse.data-api', '[data-toggle=collapse]', function( e )
-        {
-            var _that = $( this );
+        $('body').on('click.collapse.data-api', '[data-toggle=collapse]', function (e) {
+            var _that = $(this);
 
-            $( 'body' ).find( '[data-toggle=collapse]' ).each( function()
-            {
-                var href = $( this ).attr( 'href'),
-                    _that = $( this );
+            $('body').find('[data-toggle=collapse]').each(function () {
+                var href = $(this).attr('href'),
+                    _that = $(this);
                 var tmp = '[<span class="be_choiced">{replace}</span>]';
 
-                switch( href )
-                {
+                switch (href) {
                     case '#collapse_date':
-                        var _start_time = $( '#start_time' ),
-                            _end_time = $( '#end_time' );
+                        var _start_time = $('#start_time'),
+                            _end_time = $('#end_time');
 
-                        if( _start_time.val() != '' && _end_time.val() != '' )
-                        {
-                            _that.html( '时间: ' + tmp.replace( '{replace}', _start_time.val()+' - '+_end_time.val() ) );
+                        if (_start_time.val() != '' && _end_time.val() != '') {
+                            _that.html('时间: ' + tmp.replace('{replace}', _start_time.val() + ' - ' + _end_time.val()));
                         }
-                        else
-                        {
-                            /*toastr.options = {
-                                "closeButton": false,
-                                "debug": false,
-                                "newestOnTop": false,
-                                "progressBar": false,
-                                "positionClass": "toast-top-center",
-                                "preventDuplicates": false,
-                                "onclick": null,
-                                "showDuration": "300",
-                                "hideDuration": "1000",
-                                "timeOut": "5000",
-                                "extendedTimeOut": "1000",
-                                "showEasing": "swing",
-                                "hideEasing": "linear",
-                                "showMethod": "fadeIn",
-                                "hideMethod": "fadeOut"
-                            };
-
-                            toastr.info( '时间选择错误, 请检查!' );*/
-                            _that.html( '时间:' );
+                        else {
+                            _that.html('时间:');
                         }
-                    break;
+                        break;
                     case '#collapse_server':
-                        var _val = $( '#server_list' ).chosen().val();
+                        var _val = $('#server_list').chosen().val();
 
-                        if( _val != 'init' )
-                        {
-                            _that.html( '选中区服: ' + tmp.replace( '{replace}', _val ) );
+                        if (_val != 'init') {
+                            _that.html('选中区服: ' + tmp.replace('{replace}', _val));
                         }
-                        else
-                        {
-                            _that.html( '区服:' );
+                        else {
+                            _that.html('区服:');
                         }
-                    break;
+                        break;
                     case '#collapse_os':
                         var _os = [];
 
-                        $( '#collapse_os' ).find( 'input[name="choice_os[]"]' ).each( function()
-                        {
-                            if( $( this ).is( ':checked' ) )
-                            {
-                                _os.push( $( this ).val() );
+                        $('#collapse_os').find('input[name="choice_os[]"]').each(function () {
+                            if ($(this).is(':checked')) {
+                                _os.push($(this).val());
                             }
-                        } );
+                        });
 
-                        if( _os.length >= 1 )
-                        {
-                            if( _os.length >= 6 )
-                            {
-                                _that.html( '选中系统: ' + tmp.replace( '{replace}', '6+' ) );
+                        if (_os.length >= 1) {
+                            if (_os.length >= 6) {
+                                _that.html('选中系统: ' + tmp.replace('{replace}', '6+'));
                             }
-                            else
-                            {
-                                _that.html( '选中系统: ' + tmp.replace( '{replace}', _os.join() ) );
+                            else {
+                                _that.html('选中系统: ' + tmp.replace('{replace}', _os.join()));
                             }
                         }
-                        else
-                        {
-                            _that.html( '系统:' );
+                        else {
+                            _that.html('系统:');
                         }
-                    break;
+                        break;
+                    case '#collapse_state':
+                        var _state = '';
+
+                        console.log($('#collapse_state').find('input[name="choice_state"]:checked').val());
+                        break;
                     case '#collapse_channel':
                         var _channel = [];
 
-                        $( '#collapse_channel' ).find( 'input[name="choice_channel[]"]' ).each( function()
-                        {
-                            if( $( this ).is( ':checked' ) )
-                            {
-                                _channel.push( $( this ).val() );
+                        $('#collapse_channel').find('input[name="choice_channel[]"]').each(function () {
+                            if ($(this).is(':checked')) {
+                                _channel.push($(this).val());
                             }
-                        } );
+                        });
 
-                        if( _channel.length >= 1 )
-                        {
-                            if( _channel.length >= 6 )
-                            {
-                                _that.html( '选中渠道: ' + tmp.replace( '{replace}', '6+' ) );
+                        if (_channel.length >= 1) {
+                            if (_channel.length >= 6) {
+                                _that.html('选中渠道: ' + tmp.replace('{replace}', '6+'));
                             }
-                            else
-                            {
-                                _that.html( '选中渠道: ' + tmp.replace( '{replace}', _channel.join() ) );
+                            else {
+                                _that.html('选中渠道: ' + tmp.replace('{replace}', _channel.join()));
                             }
                         }
-                        else
-                        {
-                            _that.html( '渠道:' );
+                        else {
+                            _that.html('渠道:');
                         }
-                    break;
+                        break;
                 }
-            } );
-        } );
-    } );
+            });
+        });
+    });
 </script>

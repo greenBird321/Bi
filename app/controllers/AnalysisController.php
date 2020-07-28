@@ -195,7 +195,7 @@ class AnalysisController extends ControllerBase
             $ltv[$key] = $tmp1;
         }
 
-        $this->view->ltv_tab = json_encode($ltv_final);         // 表格数据
+        $this->view->ltv_tab = json_encode($ltv_final);       // 表格数据
         $this->view->ltv = json_encode($ltv);                 // 生成数据图的数据
         $this->view->ltv_tmp = json_encode($ltv_tmp);         // 数据图模板数据
 
@@ -254,11 +254,10 @@ class AnalysisController extends ControllerBase
         //判断日期是否完整
         for ($i = $end_time; $i >= $start_time; $i -= 86400) {
             if (empty($payment[date('Y-m-d', $i)])) {
-                $payment[date('Y-m-d', $i)] = '';
+                $payment[date('Y-m-d', $i)] = [];
             }
         }
         ksort($payment);
-
 
         // 将活跃用户数据拼接到 $origin 数组中
         $payTab = [];
@@ -378,7 +377,6 @@ class AnalysisController extends ControllerBase
         $area_cond["joint"] = 'GROUP BY `area`';
 
         $zones_info = $this->_Area->getDatas($area_cond);
-
         $new_device = $this->zonePieData($zones_info, 'new_device');
         $pay_device = $this->zonePieData($zones_info, 'pay_device');
         $pay_count = $this->zonePieData($zones_info, 'pay_count');
