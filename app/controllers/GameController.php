@@ -378,6 +378,163 @@ class GameController extends ControllerBase
         $this->view->pick('game/user_lost');
     }
 
+    public function lostStatsAction()
+    {
+        $condidtions = $this->mergeQueryCond(strtotime(date('Y-m-d 00:00:00', time())), strtotime(date('Y-m-d 23:59:59', time())));
+        $start = $condidtions['where']['date']['start'];
+        $end   = $condidtions['where']['date']['end'];
+        $app_id   = $condidtions['where']['app_id']['value'];
+        // 默认1服
+        $server_id = isset($condidtions['where']['zone']['value']) ? $condidtions['where']['zone']['value'] : 1;
+        $channel   = isset($condidtions['where']['channel']['value']) ? $condidtions['where']['channel']['value']:'';
+        $lost_day  = isset($condidtions['where']['lost_day']['value']) ? $condidtions['where']['lost_day']['value'] : 1;
+        $rpc_url   = $this->config->rpc["{$app_id}_url"];
+        $url       = $rpc_url . "Stats/statsLost?zone=$server_id&start=$start&end=$end&channel=$channel&lostDay=$lost_day";
+        $response  = json_decode(file_get_contents($url), true);
+        $tab_data = [];
+        if ($response['code'] == 0) {
+            foreach ($response['data'] as $key => $value) {
+                foreach ($value as $k => $v) {
+                    $tab_data[] = [
+                        $v['AreaLastStage'],
+                        $v['total_user'],
+                        $v['activity_user'],
+                        $v['lostCount'],
+                        $v['lostRate'],
+                        $v['chargeCount'],
+                        $v['money']
+                    ];
+                }
+            }
+        }
+        
+        $this->view->server_list = $this->getServerID();
+        $this->view->tab_data = json_encode($tab_data, true);
+        $this->view->lost_day = [
+            1 => '1天',
+            2 => '2天',
+            3 => '3天',
+            4 => '4天',
+            5 => '5天',
+            6 => '6天',
+            7 => '7天',
+            8 => '8天',
+            9 => '9天',
+            10 => '10天',
+        ];
+        $this->view->lostCondition = [
+            1 => '按照关卡条件筛选'
+        ];
+        $this->view->server_list = $this->getServerID();
+        $this->view->channel = $this->_channel;
+        $this->view->start = date('Y-m-d 00:00:00', time());
+        $this->view->end = date('Y-m-d 23:59:59', time());
+        $this->view->pick('game/user_lostStats');
+    }
+
+    // 实时数据查询
+    public function statsTimeQueryAction() 
+    {
+        // 默认当天的数据
+        $condidtions = $this->mergeQueryCond(strtotime(date('Y-m-d 00:00:00', time())), strtotime(date('Y-m-d H:i:s', time())));
+        $start = $condidtions['where']['date']['start'];
+        $end   = $condidtions['where']['date']['end'];
+        $app_id   = $condidtions['where']['app_id']['value'];
+        // 默认1服
+        $server_id = isset($condidtions['where']['choice_server']['value']) ? $condidtions['where']['choice_server']['value'] : 1;
+        if (is_array($server_id)) {
+            $server_id = implode(',', $server_id);
+        }
+        $channel   = isset($condidtions['where']['channel']['value']) ? $condidtions['where']['channel']['value']:'';
+        $rpc_url   = $this->config->rpc["{$app_id}_url"];
+        $url       = $rpc_url . "Stats/statsTimeQuery?zone=$server_id&start=$start&end=$end&channel=$channel";
+        $response = json_decode(file_get_contents($url), true);
+
+        $tab_data = [];
+        if ($response['code'] == 0) {
+            foreach ($response['data'] as $key => $value) {
+                foreach ($value as $k => $v) {
+                    $tab_data[] = [
+                        $key,
+                        $v['serverId'],
+                        $v['add_user_count'],
+                        $v['act_user_count'],
+                        $v['money'],
+                        $v['chargeRate'],
+                        $v['chargeRate'],
+                        $v['arpu'],
+                        $v['arppu']
+                    ];
+                }
+            } 
+        }
+
+        $this->view->server_list = $this->getServerID();
+        $this->view->channel = $this->_channel;
+        $this->view->tab_data = json_encode($tab_data, true);
+        $this->view->start = date('Y-m-d 00:00:00', time());
+        $this->view->end = date('Y-m-d H:i:s', time());
+        $this->view->pick('game/user_timequery');
+    }
+
+    // (实时查询)对比数据
+    public function statsContrastAction() 
+    {
+        // 默认当天的数据
+        $condidtions = $this->mergeQueryCond(strtotime(date('Y-m-d 00:00:00', time())), strtotime(date('Y-m-d H:i:s', time())));
+        $start = $condidtions['where']['date']['start'];
+        $end   = $condidtions['where']['date']['end'];
+        $app_id   = $condidtions['where']['app_id']['value'];
+        // 默认1服
+        $server_id = isset($condidtions['where']['choice_server']['value']) ? $condidtions['where']['choice_server']['value'] : 1;
+        if (is_array($server_id)) {
+            $server_id = implode(',', $server_id);
+        }
+        $channel   = isset($condidtions['where']['channel']['value']) ? $condidtions['where']['channel']['value']:'';
+        $rpc_url   = $this->config->rpc["{$app_id}_url"];
+        $url       = $rpc_url . "Stats/statsContrast?zone=$server_id&start=$start&end=$end&channel=$channel";
+        $response = json_decode(file_get_contents($url), true);
+
+        $tab_data = [];
+        if ($response['code'] == 0) {
+            $temp = [];
+            //数据按照日期归类
+            foreach ($response['data'] as $key => $value) {
+                foreach ($value as $k => $v) {
+                    $temp[$k][] = [
+                        $k,
+                        $key,
+                        $v['addUserCount'],
+                        $v['addRoleMoney'],
+                        $v['addRoleChargeCount'],
+                        $v['addRoleRote'],
+                        $v['addRolearpu'],
+                        $v['addRolearppu'],
+                        $v['oldUserCount'],
+                        $v['oldRoleMoney'],
+                        $v['oldRoleChargeCount'],
+                        $v['oldRoleRote'],
+                        $v['oldRolearpu'],
+                        $v['oldRolearppu']
+                    ];
+                }
+            }
+
+            // 按照前端格式进行整理
+            foreach ($temp as $key => $value) {
+                foreach ($value as $k => $v) {
+                    $tab_data[] = $v;
+                }
+            }
+        }
+        $this->view->server_list = $this->getServerID();
+        $this->view->channel = $this->_channel;
+        $this->view->tab_data = json_encode($tab_data, true);
+        $this->view->start = date('Y-m-d 00:00:00', time());
+        $this->view->end = date('Y-m-d H:i:s', time());
+        $this->view->pick('game/user_statsContrast');
+    }
+
     protected function mergeQueryCond($start_time, $end_time)
     {
         //默认
@@ -399,12 +556,12 @@ class GameController extends ControllerBase
 
         //如果用户提交查询条件 (有POST 传值)
         if ($this->request->isPost()) {
-            $req  = $this->request->get();
+            $req  = $this->request->get();;
             if (!empty($req['start_time']) && !empty($req['end_time'])) {
                 $date = dateCompare($req["start_time"], $req["end_time"]);
                 if (!empty($date)) {
                     $base['date']['start'] = $date[0];
-                    $base['date']['end']   = date('Y-m-d', strtotime($date[1])) . ' 23:59:59';
+                    $base['date']['end']   = $date[1];
                 }
             }
             // 游戏区服条件
@@ -416,11 +573,35 @@ class GameController extends ControllerBase
             }
 
             // 渠道条件
-            if (!empty($reqs["choice_channel"])) {
+            if (!empty($req["choice_channel"])) {
                 $base["channel"] = array(
                     "type" => "in",
-                    "value" => $reqs["choice_channel"],
+                    "value" => $req["choice_channel"],
                 );
+            }
+
+            // 流失天数
+            if (!empty($req['lost_day'])) {
+                $base["lost_day"] = [
+                    'symbol' => '=',
+                    'value' => $req['lost_day']
+                ];
+            }
+
+            // 流失条件
+            if (!empty($req['lost_condition'])) {
+                $base["lost_condition"] = [
+                    'symbol' => '=',
+                    'value' => $req['lost_condition']
+                ];
+            }
+
+            // 多服务器选择
+            if (!empty($req['choice_server'])) {
+                $base['choice_server'] = [
+                    'symbol' => 'range',
+                    'value' => $req['choice_server']
+                ];
             }
         }
 

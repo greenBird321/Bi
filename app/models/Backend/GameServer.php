@@ -41,10 +41,12 @@ class GameServer extends Base
             // 新增lmyz-dev区服
             '1051021' => [
                 '1' => ['id' => 1, 'name' => 'Lmyz-S1-Dev'],
+                '2' => ['id' => 2, 'name' => 'Lmyz-S2-Dev'],
             ],
             // 新增lmyz-open区服
             '1051020' => [
                 '1' => ['id' => 1, 'name' => 'Lmyz-S1-open'],
+                '2' => ['id' => 1, 'name' => 'Lmyz-S2-open'],
             ],
         ];
 
